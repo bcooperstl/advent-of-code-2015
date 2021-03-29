@@ -16,3 +16,6 @@
 2,1,test_cases/day2_test2.txt,43
 2,1,test_cases/day2_test3.txt,101
 2,1,day2_input.txt,1598415
+2,2,test_cases/day2_test1.txt,34
+2,2,test_cases/day2_test2.txt,14
+2,2,test_cases/day2_test3.txt,48
