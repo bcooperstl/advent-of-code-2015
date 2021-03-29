@@ -9,3 +9,5 @@
 1,1,test_cases/day1_test8.txt,-3
 1,1,test_cases/day1_test9.txt,-3
 1,1,day1_input.txt,232
+1,2,test_cases/day1_test10.txt,1
+1,2,test_cases/day1_test11.txt,5
