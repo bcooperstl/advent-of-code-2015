@@ -53,3 +53,34 @@ string AocDay1::part1(string filename, vector<string> extra_args)
     out << floor;
     return out.str();
 }
+
+string AocDay1::part2(string filename, vector<string> extra_args)
+{
+    string data = read_input(filename);
+    long floor = 0;
+    int counter;
+    for (int i=0; i<data.size(); i++)
+    {
+        if (data[i] == '(')
+        {
+            floor++;
+        }
+        else if (data[i] == ')')
+        {
+            floor--;
+        }
+        else
+        {
+            cerr << "Invalid character " << data[i] << " read at position " << i << endl;
+        }
+        if (floor < 0)
+        {
+            counter = i + 1;// characters start at 1, but my index starts at 0
+            break;
+        }
+    }
+    
+    ostringstream out;
+    out << counter;
+    return out.str();
+}
