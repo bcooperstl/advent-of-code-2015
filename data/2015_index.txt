@@ -8,3 +8,4 @@
 1,1,test_cases/day1_test7.txt,-1
 1,1,test_cases/day1_test8.txt,-3
 1,1,test_cases/day1_test9.txt,-3
+1,1,day1_input.txt,232
