@@ -37,6 +37,7 @@ regex AocDay5::rule_2_regex("([a-z])\\1{1}");
 // does not contain 'ab' 'cd' 'pq' or 'xy'
 regex AocDay5::rule_3_regex("ab|cd|pq|xy");
 
+
 bool AocDay5::is_nice(string input)
 {
     bool is_nice = true;
@@ -87,6 +88,43 @@ bool AocDay5::is_nice(string input)
     return is_nice;
 }
 
+// contains a 2-character seqeunce that repeats in the string (non-overlapping)
+regex AocDay5::rule_4_regex("([a-z]{2})(.*)\\1{1}");
+
+// one letter that repeats with another letter in between
+regex AocDay5::rule_5_regex("([a-z])[a-z]\\1{1}");
+
+bool AocDay5::is_nice_complex(string input)
+{
+    bool is_nice = true;
+    cout << "Checking string [" << input << "]" << endl;
+    match_results<std::string::const_iterator> matches;
+    
+    regex_search(input, matches, rule_4_regex);
+    if (matches.size() >= 1)
+    {
+        cout << "  An 2-character sequence repeating in the string keeps the same status" << endl;
+    }
+    else
+    {
+        cout << "  No occurrence of rule 4 the string not nice" << endl;
+        is_nice = false;
+    }
+    
+    regex_search(input, matches, rule_5_regex);
+    if (matches.size() >= 1)
+    {
+        cout << "  A letter repeating with a letter in between keeps the same status" << endl;
+    }
+    else
+    {
+        cout << "  No occurrence of rule 5 the string not nice" << endl;
+        is_nice = false;
+    }
+    
+    return is_nice;
+}
+
 string AocDay5::part1(string filename, vector<string> extra_args)
 {
     vector<string> input = read_input(filename);
@@ -94,6 +132,24 @@ string AocDay5::part1(string filename, vector<string> extra_args)
     for (int i=0; i<input.size(); i++)
     {
         if (is_nice(input[i]))
+        {
+            number_nice++;
+        }
+    }
+    
+    ostringstream out;
+    out << number_nice;
+    return out.str();
+}
+
+
+string AocDay5::part2(string filename, vector<string> extra_args)
+{
+    vector<string> input = read_input(filename);
+    long number_nice = 0;
+    for (int i=0; i<input.size(); i++)
+    {
+        if (is_nice_complex(input[i]))
         {
             number_nice++;
         }
