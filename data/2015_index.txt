@@ -39,3 +39,7 @@
 5,1,test_cases/day5_test5.txt,0
 5,1,test_cases/day5_test6.txt,2
 5,1,day5_input.txt,258
+5,2,test_cases/day5_test7.txt,1
+5,2,test_cases/day5_test8.txt,1
+5,2,test_cases/day5_test9.txt,0
+5,2,test_cases/day5_test10.txt,0
