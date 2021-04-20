@@ -80,6 +80,56 @@ void Day6Field::process_instruction(Day6Instruction instruction)
     cout << "  Resulted in " << counter << " cells touched" << endl;
 }
 
+Day6BrightnessField::Day6BrightnessField()
+{
+    for (int y=0; y<FIELD_SIZE_Y; y++)
+    {
+        for (int x=0; x<FIELD_SIZE_X; x++)
+        {
+            m_field[y][x]=0;
+        }
+    }
+}
+
+Day6BrightnessField::~Day6BrightnessField()
+{
+}
+
+int Day6BrightnessField::sum_brightness()
+{
+    int sum = 0;
+    for (int y=0; y<FIELD_SIZE_Y; y++)
+    {
+        for (int x=0; x<FIELD_SIZE_X; x++)
+        {
+            sum+=m_field[y][x];
+        }
+    }
+    return sum;
+}    
+
+void Day6BrightnessField::process_instruction(Day6Instruction instruction)
+{
+    for (int y=instruction.min_y; y<=instruction.max_y; y++)
+    {
+        for (int x=instruction.min_x; x<=instruction.max_x; x++)
+        {
+            if (instruction.operation==TurnOn)
+            {
+                m_field[y][x]+=1;
+            }
+            else if ((instruction.operation==TurnOff) && (m_field[y][x]>0)) // a brightness cannot dip below 0
+            {
+                m_field[y][x]-=1;
+            }
+            else // (instruction.operation==Toggle)
+            {
+                m_field[y][x]+=2;
+            }
+        }
+    }
+}
+
 AocDay6::AocDay6():AocDay(6)
 {
 }
@@ -159,5 +209,20 @@ string AocDay6::part1(string filename, vector<string> extra_args)
     
     ostringstream out;
     out << field.count_elements(true);
+    return out.str();
+}
+
+string AocDay6::part2(string filename, vector<string> extra_args)
+{
+    Day6BrightnessField field;
+    vector<Day6Instruction> instructions = parse_input(filename);
+    
+    for (int i=0; i<instructions.size(); i++)
+    {
+        field.process_instruction(instructions[i]);
+    }
+    
+    ostringstream out;
+    out << field.sum_brightness();
     return out.str();
 }

@@ -35,6 +35,18 @@ class Day6Field
         void process_instruction(Day6Instruction instruction);    
 };
 
+class Day6BrightnessField
+{
+    private:
+        int m_field[FIELD_SIZE_Y][FIELD_SIZE_X]; // y index first, then x index
+    public:
+        Day6BrightnessField();
+        ~Day6BrightnessField();
+        int sum_brightness();
+        void process_instruction(Day6Instruction instruction);    
+};
+
+
 class AocDay6 : public AocDay
 {
     private:
@@ -43,7 +55,7 @@ class AocDay6 : public AocDay
         AocDay6();
         ~AocDay6();
         string part1(string filename, vector<string> extra_args);
-        //string part2(string filename, vector<string> extra_args);
+        string part2(string filename, vector<string> extra_args);
 };
 
 #endif
