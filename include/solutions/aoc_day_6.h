@@ -42,7 +42,7 @@ class Day6BrightnessField
     public:
         Day6BrightnessField();
         ~Day6BrightnessField();
-        int sum_brightness();
+        long sum_brightness();
         void process_instruction(Day6Instruction instruction);    
 };
 

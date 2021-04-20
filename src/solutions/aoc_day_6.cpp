@@ -95,14 +95,14 @@ Day6BrightnessField::~Day6BrightnessField()
 {
 }
 
-int Day6BrightnessField::sum_brightness()
+long Day6BrightnessField::sum_brightness()
 {
-    int sum = 0;
+    long sum = 0;
     for (int y=0; y<FIELD_SIZE_Y; y++)
     {
         for (int x=0; x<FIELD_SIZE_X; x++)
         {
-            sum+=m_field[y][x];
+            sum+=((long)m_field[y][x]);
         }
     }
     return sum;
@@ -118,9 +118,12 @@ void Day6BrightnessField::process_instruction(Day6Instruction instruction)
             {
                 m_field[y][x]+=1;
             }
-            else if ((instruction.operation==TurnOff) && (m_field[y][x]>0)) // a brightness cannot dip below 0
+            else if (instruction.operation==TurnOff)
             {
-                m_field[y][x]-=1;
+                if (m_field[y][x]>0) // a brightness cannot dip below 0
+                {
+                    m_field[y][x]-=1;
+                }
             }
             else // (instruction.operation==Toggle)
             {
