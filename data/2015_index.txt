@@ -47,3 +47,5 @@
 6,1,test_cases/day6_test1.txt,998996
 6,1,day6_input.txt,377891
 6,2,test_cases/day6_test1.txt,1001996
+6,2,test_cases/day6_test2.txt,2000001
+6,2,day6_input.txt,14110788
