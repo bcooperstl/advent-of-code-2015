@@ -44,3 +44,4 @@
 5,2,test_cases/day5_test9.txt,0
 5,2,test_cases/day5_test10.txt,0
 5,2,day5_input.txt,53
+6,1,test_cases/day6_test1.txt,998996
