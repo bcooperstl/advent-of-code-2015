@@ -36,7 +36,7 @@ namespace Day7
         return m_literal_value;
     }
     
-    void Literal::fixup(map<string, Wire *> lookup_map)
+    void Literal::fixup(map<string, Wire *> & lookup_map)
     {
     }
     
@@ -71,7 +71,7 @@ namespace Day7
     {
     }
     
-    void And::fixup(map<string, Wire *> lookup_map)
+    void And::fixup(map<string, Wire *> & lookup_map)
     {
         m_left_wire  = lookup_map[m_left_name];
         m_right_wire = lookup_map[m_right_name];
@@ -106,7 +106,7 @@ namespace Day7
     {
     }
     
-    void Or::fixup(map<string, Wire *> lookup_map)
+    void Or::fixup(map<string, Wire *> & lookup_map)
     {
         m_left_wire  = lookup_map[m_left_name];
         m_right_wire = lookup_map[m_right_name];
@@ -139,7 +139,7 @@ namespace Day7
     {
     }
     
-    void Not::fixup(map<string, Wire *> lookup_map)
+    void Not::fixup(map<string, Wire *> & lookup_map)
     {
         m_input_wire = lookup_map[m_input_name];
     }
@@ -153,8 +153,8 @@ namespace Day7
             return m_calculated_value;
         }
         
-        cout << m_name << ": Calculating value from NOT" << m_input_name << endl;
-        m_calculated_value = !m_input_wire->get_value();
+        cout << m_name << ": Calculating value from NOT " << m_input_name << endl;
+        m_calculated_value = ~m_input_wire->get_value();
         
         cout << m_name << ": Storing and returning value of " << m_calculated_value << endl;
         set_evaluated(true);
@@ -172,7 +172,7 @@ namespace Day7
     {
     }
     
-    void RShift::fixup(map<string, Wire *> lookup_map)
+    void RShift::fixup(map<string, Wire *> & lookup_map)
     {
         m_input_wire = lookup_map[m_input_name];
     }
@@ -205,7 +205,7 @@ namespace Day7
     {
     }
     
-    void LShift::fixup(map<string, Wire *> lookup_map)
+    void LShift::fixup(map<string, Wire *> & lookup_map)
     {
         m_input_wire = lookup_map[m_input_name];
     }
@@ -249,12 +249,89 @@ vector<vector<string>> AocDay7::read_input(string filename)
     return lines;
 }
 
-string AocDay7::part1(string filename, vector<string> extra_args)
+/*
+Samples...
+456 -> y
+x AND y -> d
+x OR y -> e
+x LSHIFT 2 -> f
+y RSHIFT 2 -> g
+NOT x -> h
+*/
+
+Wire * AocDay7::create_wire(vector<string> tokens)
 {
-    vector<vector<string>> lines = read_input(filename);
-    
-    ostringstream out;
-    out << "";
-    return out.str();
+    Wire * wire = NULL;
+    if (tokens[1] == "AND")
+    {
+        wire = new And(tokens[4], tokens[0], tokens[2]);
+    }
+    else if (tokens[1] == "OR")
+    {
+        wire = new Or(tokens[4], tokens[0], tokens[2]);
+    }
+    else if (tokens[0] == "NOT")
+    {
+        wire = new Not(tokens[3], tokens[1]);
+    }
+    else if (tokens[1] == "RSHIFT")
+    {
+        wire = new RShift(tokens[4], tokens[0], strtol(tokens[2].c_str(), NULL, 10));
+    }
+    else if (tokens[1] == "LSHIFT")
+    {
+        wire = new LShift(tokens[4], tokens[0], strtol(tokens[2].c_str(), NULL, 10));
+    }
+    else if (tokens[1] == "->")
+    {
+        wire = new Literal(tokens[2], strtol(tokens[0].c_str(), NULL, 10));
+    }
+    else 
+    {
+        cerr << "Unable to create wire from: ";
+        for (int i=0; i<tokens.size(); i++)
+        {
+            cerr << tokens[i] << ' ';
+        }
+        cerr << endl;
+    }
+    return wire;
 }
 
+string AocDay7::part1(string filename, vector<string> extra_args)
+{
+    if (extra_args.size() != 1)
+    {
+        cerr << "Day 7 Part 1 required 1 extra argument for the target" << endl;
+        return "";
+    }
+
+    int preamble_length = strtol(extra_args[0].c_str(), NULL, 10);
+    vector<vector<string>> lines = read_input(filename);
+    map<string, Wire *> lookup;
+    lookup["1"] = new Literal("1", 1); // kludge for the "1 AND x -> y" rules that need a 1 value
+    for (int i=0; i<lines.size(); i++)
+    {
+        Wire * wire = create_wire(lines[i]);
+        lookup[wire->get_name()] = wire;
+        cout << "Storing value in wire " << wire->get_name() << endl;
+    }
+    
+    for(map<string, Wire *>::iterator fixup_iter = lookup.begin(); fixup_iter != lookup.end(); ++fixup_iter)
+    {
+        fixup_iter->second->fixup(lookup);
+    }
+    
+    cout << "Looking up value for " << extra_args[0] << endl;
+    uint16_t value = lookup[extra_args[0]]->get_value();
+    cout << "Retreived value " << value << endl;
+    
+    for(map<string, Wire *>::iterator del_iter = lookup.begin(); del_iter != lookup.end(); ++del_iter)
+    {
+        delete del_iter->second;
+    }
+    
+    ostringstream out;
+    out << value;
+    return out.str();
+}

@@ -17,7 +17,7 @@ namespace Day7
             ~Wire();
             string get_name();
             virtual uint16_t get_value() = 0;
-            virtual void fixup(map<string, Wire *> lookup_map) = 0;
+            virtual void fixup(map<string, Wire *> & lookup_map) = 0;
     };
     
     class Literal : public Wire
@@ -28,7 +28,7 @@ namespace Day7
             Literal(string name, uint16_t value);
             ~Literal();
             uint16_t get_value();
-            void fixup(map<string, Wire *> lookup_map);
+            void fixup(map<string, Wire *> & lookup_map);
     };
     
     class LogicGate : public Wire
@@ -41,7 +41,7 @@ namespace Day7
             ~LogicGate();
             bool is_evaluated();
             void set_evaluated(bool value);
-            virtual void fixup(map<string, Wire *> lookup_map) = 0; 
+            virtual void fixup(map<string, Wire *> & lookup_map) = 0; 
             virtual uint16_t get_value() = 0;
     };
     
@@ -56,7 +56,7 @@ namespace Day7
         public:
             And(string name, string left_name, string right_name);
             ~And();
-            void fixup(map<string, Wire *> lookup_map);
+            void fixup(map<string, Wire *> & lookup_map);
             uint16_t get_value();
     };
             
@@ -70,7 +70,7 @@ namespace Day7
         public:
             Or(string name, string left_name, string right_name);
             ~Or();
-            void fixup(map<string, Wire *> lookup_map);
+            void fixup(map<string, Wire *> & lookup_map);
             uint16_t get_value();
     };
 
@@ -82,7 +82,7 @@ namespace Day7
         public:
             Not(string name, string input_name);
             ~Not();
-            void fixup(map<string, Wire *> lookup_map);
+            void fixup(map<string, Wire *> & lookup_map);
             uint16_t get_value();
     };
     
@@ -95,7 +95,7 @@ namespace Day7
         public:
             RShift(string name, string input_name, int shift_bits);
             ~RShift();
-            void fixup(map<string, Wire *> lookup_map);
+            void fixup(map<string, Wire *> & lookup_map);
             uint16_t get_value();
     };
     
@@ -108,7 +108,7 @@ namespace Day7
         public:
             LShift(string name, string input_name, int shift_bits);
             ~LShift();
-            void fixup(map<string, Wire *> lookup_map);
+            void fixup(map<string, Wire *> & lookup_map);
             uint16_t get_value();
     };
 }
@@ -119,7 +119,7 @@ class AocDay7 : public AocDay
 {
     private:
         vector<vector<string>> read_input(string filename);
-        Wire * create_wire(vector<string> line);
+        Wire * create_wire(vector<string> tokens);
         
     public:
         AocDay7();
