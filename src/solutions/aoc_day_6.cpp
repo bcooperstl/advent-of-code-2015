@@ -8,126 +8,130 @@
 #include "file_utils.h"
 
 using namespace std;
+using namespace Day6;
 
-Day6Field::Day6Field()
+namespace Day6
 {
-    for (int y=0; y<FIELD_SIZE_Y; y++)
+    Field::Field()
     {
-        for (int x=0; x<FIELD_SIZE_X; x++)
+        for (int y=0; y<FIELD_SIZE_Y; y++)
         {
-            m_field[y][x]=false;
-        }
-    }
-}
-
-Day6Field::~Day6Field()
-{
-}
-
-int Day6Field::count_elements(bool status)
-{
-    int count = 0;
-    for (int y=0; y<FIELD_SIZE_Y; y++)
-    {
-        for (int x=0; x<FIELD_SIZE_X; x++)
-        {
-            if (m_field[y][x]==status)
-            {
-                count++;
-            }
-        }
-    }
-    return count;
-}    
-
-void Day6Field::process_instruction(Day6Instruction instruction)
-{
-    int counter=0;
-    cout << "Instruction to ";
-    switch (instruction.operation)
-    {
-        case TurnOn:
-            cout << "turn on";
-            break;
-        case TurnOff:
-            cout << "turn off";
-            break;
-        case Toggle:
-            cout << "toggle";
-            break;
-    }
-    cout << " cells from " << instruction.min_x << " <= x <= " << instruction.max_x << " to " << instruction.min_y << " <= y <= " << instruction.max_y << endl;
-    
-    for (int y=instruction.min_y; y<=instruction.max_y; y++)
-    {
-        for (int x=instruction.min_x; x<=instruction.max_x; x++)
-        {
-            if (instruction.operation==TurnOn)
-            {
-                m_field[y][x]=true;
-            }
-            else if (instruction.operation==TurnOff)
+            for (int x=0; x<FIELD_SIZE_X; x++)
             {
                 m_field[y][x]=false;
             }
-            else // (instruction.operation==Toggle)
-            {
-                m_field[y][x]=!m_field[y][x];
-            }
-            counter++;
         }
     }
-    cout << "  Resulted in " << counter << " cells touched" << endl;
-}
-
-Day6BrightnessField::Day6BrightnessField()
-{
-    for (int y=0; y<FIELD_SIZE_Y; y++)
+    
+    Field::~Field()
     {
-        for (int x=0; x<FIELD_SIZE_X; x++)
-        {
-            m_field[y][x]=0;
-        }
     }
-}
-
-Day6BrightnessField::~Day6BrightnessField()
-{
-}
-
-long Day6BrightnessField::sum_brightness()
-{
-    long sum = 0;
-    for (int y=0; y<FIELD_SIZE_Y; y++)
+    
+    int Field::count_elements(bool status)
     {
-        for (int x=0; x<FIELD_SIZE_X; x++)
+        int count = 0;
+        for (int y=0; y<FIELD_SIZE_Y; y++)
         {
-            sum+=((long)m_field[y][x]);
-        }
-    }
-    return sum;
-}    
-
-void Day6BrightnessField::process_instruction(Day6Instruction instruction)
-{
-    for (int y=instruction.min_y; y<=instruction.max_y; y++)
-    {
-        for (int x=instruction.min_x; x<=instruction.max_x; x++)
-        {
-            if (instruction.operation==TurnOn)
+            for (int x=0; x<FIELD_SIZE_X; x++)
             {
-                m_field[y][x]+=1;
-            }
-            else if (instruction.operation==TurnOff)
-            {
-                if (m_field[y][x]>0) // a brightness cannot dip below 0
+                if (m_field[y][x]==status)
                 {
-                    m_field[y][x]-=1;
+                    count++;
                 }
             }
-            else // (instruction.operation==Toggle)
+        }
+        return count;
+    }    
+    
+    void Field::process_instruction(Instruction instruction)
+    {
+        int counter=0;
+        cout << "Instruction to ";
+        switch (instruction.operation)
+        {
+            case TurnOn:
+                cout << "turn on";
+                break;
+            case TurnOff:
+                cout << "turn off";
+                break;
+            case Toggle:
+                cout << "toggle";
+                break;
+        }
+        cout << " cells from " << instruction.min_x << " <= x <= " << instruction.max_x << " to " << instruction.min_y << " <= y <= " << instruction.max_y << endl;
+        
+        for (int y=instruction.min_y; y<=instruction.max_y; y++)
+        {
+            for (int x=instruction.min_x; x<=instruction.max_x; x++)
             {
-                m_field[y][x]+=2;
+                if (instruction.operation==TurnOn)
+                {
+                    m_field[y][x]=true;
+                }
+                else if (instruction.operation==TurnOff)
+                {
+                    m_field[y][x]=false;
+                }
+                else // (instruction.operation==Toggle)
+                {
+                    m_field[y][x]=!m_field[y][x];
+                }
+                counter++;
+            }
+        }
+        cout << "  Resulted in " << counter << " cells touched" << endl;
+    }
+    
+    BrightnessField::BrightnessField()
+    {
+        for (int y=0; y<FIELD_SIZE_Y; y++)
+        {
+            for (int x=0; x<FIELD_SIZE_X; x++)
+            {
+                m_field[y][x]=0;
+            }
+        }
+    }
+    
+    BrightnessField::~BrightnessField()
+    {
+    }
+    
+    long BrightnessField::sum_brightness()
+    {
+        long sum = 0;
+        for (int y=0; y<FIELD_SIZE_Y; y++)
+        {
+            for (int x=0; x<FIELD_SIZE_X; x++)
+            {
+                sum+=((long)m_field[y][x]);
+            }
+        }
+        return sum;
+    }    
+    
+    void BrightnessField::process_instruction(Instruction instruction)
+    {
+        for (int y=instruction.min_y; y<=instruction.max_y; y++)
+        {
+            for (int x=instruction.min_x; x<=instruction.max_x; x++)
+            {
+                if (instruction.operation==TurnOn)
+                {
+                    m_field[y][x]+=1;
+                }
+                else if (instruction.operation==TurnOff)
+                {
+                    if (m_field[y][x]>0) // a brightness cannot dip below 0
+                    {
+                        m_field[y][x]-=1;
+                    }
+                }
+                else // (instruction.operation==Toggle)
+                {
+                    m_field[y][x]+=2;
+                }
             }
         }
     }
@@ -146,11 +150,11 @@ AocDay6::~AocDay6()
     "toggle 0,0 through 999,0" would toggle the first line of 1000 lights, turning off the ones that were on, and turning on the ones that were off.
     "turn off 499,499 through 500,500" would turn off (or leave off) the middle four lights.
 */
-vector<Day6Instruction> AocDay6::parse_input(string filename)
+vector<Instruction> AocDay6::parse_input(string filename)
 {
     FileUtils fileutils;
     vector<vector<string>> lines;
-    vector<Day6Instruction> data;
+    vector<Instruction> data;
     char delims[2];
     delims[0]=' ';
     delims[1]=',';
@@ -163,7 +167,7 @@ vector<Day6Instruction> AocDay6::parse_input(string filename)
     for (int i=0; i<lines.size(); i++)
     {
         vector<string> words = lines[i];
-        Day6Instruction instruction;
+        Instruction instruction;
         if (words[0] == "turn" && words[1] == "on")
         {
             instruction.operation=TurnOn;
@@ -202,8 +206,8 @@ vector<Day6Instruction> AocDay6::parse_input(string filename)
 
 string AocDay6::part1(string filename, vector<string> extra_args)
 {
-    Day6Field field;
-    vector<Day6Instruction> instructions = parse_input(filename);
+    Field field;
+    vector<Instruction> instructions = parse_input(filename);
     
     for (int i=0; i<instructions.size(); i++)
     {
@@ -217,8 +221,8 @@ string AocDay6::part1(string filename, vector<string> extra_args)
 
 string AocDay6::part2(string filename, vector<string> extra_args)
 {
-    Day6BrightnessField field;
-    vector<Day6Instruction> instructions = parse_input(filename);
+    BrightnessField field;
+    vector<Instruction> instructions = parse_input(filename);
     
     for (int i=0; i<instructions.size(); i++)
     {

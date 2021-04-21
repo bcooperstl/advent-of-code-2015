@@ -49,3 +49,15 @@
 6,2,test_cases/day6_test1.txt,1001996
 6,2,test_cases/day6_test2.txt,2000001
 6,2,day6_input.txt,14110788
+#extra parameter for day 7 part 1 is which wire to return the value of
+7,1,test_cases/day7_test1.txt,72,d
+7,1,test_cases/day7_test1.txt,507,e
+7,1,test_cases/day7_test1.txt,492,f
+7,1,test_cases/day7_test1.txt,114,g
+7,1,test_cases/day7_test1.txt,65412,h
+7,1,test_cases/day7_test1.txt,65079,i
+7,1,test_cases/day7_test1.txt,123,x
+7,1,test_cases/day7_test1.txt,456,y
+7,1,day7_input.txt,3176
+7,2,day7_input.txt,14710
+
