@@ -226,7 +226,38 @@ namespace Day7
         set_evaluated(true);
         return m_calculated_value;
     }
+
+    NoOp::NoOp(string name, string input_name):LogicGate(name)
+    {
+        m_input_name = input_name;
+        m_input_wire = NULL;
+    }
     
+    NoOp::~NoOp()
+    {
+    }
+    
+    void NoOp::fixup(map<string, Wire *> & lookup_map)
+    {
+        m_input_wire = lookup_map[m_input_name];
+    }
+
+    uint16_t NoOp::get_value()
+    {
+        cout << m_name << ": Requesting value" << endl;
+        if (m_evaluated == true)
+        {
+            cout << m_name << ": Returning stored value of " << m_calculated_value << endl;
+            return m_calculated_value;
+        }
+        
+        cout << m_name << ": Calculating value from NO-OP " << m_input_name << endl;
+        m_calculated_value = m_input_wire->get_value();
+        
+        cout << m_name << ": Storing and returning value of " << m_calculated_value << endl;
+        set_evaluated(true);
+        return m_calculated_value;
+    }    
 }
 
 AocDay7::AocDay7():AocDay(7)
@@ -257,6 +288,7 @@ x OR y -> e
 x LSHIFT 2 -> f
 y RSHIFT 2 -> g
 NOT x -> h
+x -> y // NoOp
 */
 
 Wire * AocDay7::create_wire(vector<string> tokens)
@@ -284,7 +316,15 @@ Wire * AocDay7::create_wire(vector<string> tokens)
     }
     else if (tokens[1] == "->")
     {
-        wire = new Literal(tokens[2], strtol(tokens[0].c_str(), NULL, 10));
+        char test_char = tokens[0][0];
+        if (test_char >= '0' && test_char <= '9') // number; create a literal
+        {
+            wire = new Literal(tokens[2], strtol(tokens[0].c_str(), NULL, 10));
+        }
+        else
+        {
+            wire = new NoOp(tokens[2], tokens[0]);
+        }
     }
     else 
     {

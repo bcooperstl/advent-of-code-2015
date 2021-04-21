@@ -111,6 +111,18 @@ namespace Day7
             void fixup(map<string, Wire *> & lookup_map);
             uint16_t get_value();
     };
+    
+    class NoOp : public LogicGate
+    {
+        protected:
+            Wire * m_input_wire;
+            string m_input_name;
+        public:
+            NoOp(string name, string input_name);
+            ~NoOp();
+            void fixup(map<string, Wire *> & lookup_map);
+            uint16_t get_value();
+    };        
 }
 
 using namespace Day7;
