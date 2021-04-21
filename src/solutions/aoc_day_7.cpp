@@ -342,11 +342,10 @@ string AocDay7::part1(string filename, vector<string> extra_args)
 {
     if (extra_args.size() != 1)
     {
-        cerr << "Day 7 Part 1 required 1 extra argument for the target" << endl;
+        cerr << "Day 7 Part 1 requires 1 extra argument for the target wire" << endl;
         return "";
     }
 
-    int preamble_length = strtol(extra_args[0].c_str(), NULL, 10);
     vector<vector<string>> lines = read_input(filename);
     map<string, Wire *> lookup;
     lookup["1"] = new Literal("1", 1); // kludge for the "1 AND x -> y" rules that need a 1 value
@@ -373,5 +372,71 @@ string AocDay7::part1(string filename, vector<string> extra_args)
     
     ostringstream out;
     out << value;
+    return out.str();
+}
+
+string AocDay7::part2(string filename, vector<string> extra_args)
+{
+    if (extra_args.size() != 2)
+    {
+        cerr << "Day 7 Part 2 requires 2 extra argument for 1) the target wire and 2) the replacement wire" << endl;
+        return "";
+    }
+
+    vector<vector<string>> lines = read_input(filename);
+    map<string, Wire *> lookup;
+    lookup["1"] = new Literal("1", 1); // kludge for the "1 AND x -> y" rules that need a 1 value
+    for (int i=0; i<lines.size(); i++)
+    {
+        Wire * wire = create_wire(lines[i]);
+        lookup[wire->get_name()] = wire;
+        cout << "Storing value in wire " << wire->get_name() << endl;
+    }
+    
+    for(map<string, Wire *>::iterator fixup_iter = lookup.begin(); fixup_iter != lookup.end(); ++fixup_iter)
+    {
+        fixup_iter->second->fixup(lookup);
+    }
+    
+    cout << "Looking up value for " << extra_args[0] << endl;
+    uint16_t first_value = lookup[extra_args[0]]->get_value();
+    cout << "Retreived value " << first_value << endl;
+    
+    for(map<string, Wire *>::iterator del_iter = lookup.begin(); del_iter != lookup.end(); ++del_iter)
+    {
+        delete del_iter->second;
+    }
+    
+    lookup.clear();
+    
+    lookup["1"] = new Literal("1", 1); // kludge for the "1 AND x -> y" rules that need a 1 value
+    lookup[extra_args[1]] = new Literal(extra_args[1], first_value);
+    
+    for (int i=0; i<lines.size(); i++)
+    {
+        Wire * wire = create_wire(lines[i]);
+        if (wire->get_name() == extra_args[1])
+        {
+            cout << "Skipping re-creation for value " << wire->get_name();
+            delete wire;
+        }
+        else
+        {
+            lookup[wire->get_name()] = wire;
+            cout << "Storing value in wire " << wire->get_name() << endl;
+        }
+    }
+    
+    for(map<string, Wire *>::iterator fixup_iter = lookup.begin(); fixup_iter != lookup.end(); ++fixup_iter)
+    {
+        fixup_iter->second->fixup(lookup);
+    }
+    
+    cout << "Looking up value for " << extra_args[0] << endl;
+    uint16_t second_value = lookup[extra_args[0]]->get_value();
+    cout << "Retreived value " << second_value << endl;
+    
+    ostringstream out;
+    out << second_value;
     return out.str();
 }
