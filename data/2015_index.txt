@@ -60,4 +60,4 @@
 7,1,test_cases/day7_test1.txt,456,y
 7,1,day7_input.txt,3176
 7,2,day7_input.txt,14710
-
+8,1,test_cases/day8_test1.txt,12
