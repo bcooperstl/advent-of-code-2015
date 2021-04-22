@@ -65,6 +65,29 @@ int AocDay8::calculate_memory_length(string input)
     return length;
 }
 
+int AocDay8::calculate_encoded_length(string input)
+{
+    int length = 2; // add 2 for the first and final quotes in the new string
+    const char * str = input.c_str();
+    for (int i=0; i<input.length(); i++)
+    {
+        if (str[i] == '\"')
+        {
+            length += 2; // one for the extra \ and one for the "
+        }
+        else if (str[i] == '\\')
+        {
+            length += 2; // one for the extra \ and one for the given backslash
+        }
+        else
+        {
+            length++;
+        }
+    }
+    
+    return length;
+}
+
 string AocDay8::part1(string filename, vector<string> extra_args)
 {
     vector<string> input = read_input(filename);
@@ -81,6 +104,27 @@ string AocDay8::part1(string filename, vector<string> extra_args)
     
     int result = sum_literal - sum_memory;
     cout << "Final result = sum_literal - sum_memory = " << sum_literal << " - " << sum_memory << " = " << result << endl;
+    ostringstream out;
+    out << result;
+    return out.str();
+}
+
+string AocDay8::part2(string filename, vector<string> extra_args)
+{
+    vector<string> input = read_input(filename);
+    int sum_literal = 0;
+    int sum_encoded = 0;
+    for (int i=0; i<input.size(); i++)
+    {
+        int literal = calculate_literal_length(input[i]);
+        int encoded = calculate_encoded_length(input[i]);
+        cout << input[i] << " has literal length " << literal << " and encoded length " << encoded << endl;
+        sum_literal += literal;
+        sum_encoded += encoded;
+    }
+    
+    int result = sum_encoded - sum_literal;
+    cout << "Final result = sum_encoded - sum_literal = " << sum_encoded << " - " << sum_literal << " = " << result << endl;
     ostringstream out;
     out << result;
     return out.str();
