@@ -84,14 +84,14 @@ int AocDay9::parse_input(string filename, City ** cities)
 
 int AocDay9::calculate_distance(City ** cities, int num_cities)
 {
-    cout << "Calculating distance " << endl;
+    //cout << "Calculating distance " << endl;
     int distance = 0;
     for (int i=0, j=1; i<num_cities-1; i++, j++)
     {
-        cout << "  " << cities[i]->name << " to " << cities[j]->name << " is " << cities[i]->distances[cities[j]] << endl;
+        //cout << "  " << cities[i]->name << " to " << cities[j]->name << " is " << cities[i]->distances[cities[j]] << endl;
         distance+=cities[i]->distances[cities[j]];
     }
-    cout << "  total distance " << distance << endl;
+    //cout << "  total distance " << distance << endl;
     return distance;
 }
 
