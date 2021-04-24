@@ -66,3 +66,5 @@
 8,2,day8_input.txt,2117
 9,1,test_cases/day9_test1.txt,605
 9,1,day9_input.txt,251
+9,2,test_cases/day9_test1.txt,982
+9,2,day9_input.txt,898
