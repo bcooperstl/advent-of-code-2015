@@ -22,8 +22,8 @@ class AocDay9 : public AocDay
 {
     private:
         int parse_input(string filename, City ** cities); // returns the number of cities created
-        
-        int heaps_algorithm_generate(City ** cities, int num_cities, int k);
+        int calculate_distance(City ** cities, int num_cities);
+        void heaps_algorithm_generate(City ** cities, int num_cities, int k, int & best_distance);
         int find_shortest_journey(City ** cities, int num_cities);
     public:
         AocDay9();

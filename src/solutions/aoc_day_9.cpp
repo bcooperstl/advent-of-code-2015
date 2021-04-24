@@ -82,6 +82,63 @@ int AocDay9::parse_input(string filename, City ** cities)
     return count;
 }
 
+int AocDay9::calculate_distance(City ** cities, int num_cities)
+{
+    cout << "Calculating distance " << endl;
+    int distance = 0;
+    for (int i=0, j=1; i<num_cities-1; i++, j++)
+    {
+        cout << "  " << cities[i]->name << " to " << cities[j]->name << " is " << cities[i]->distances[cities[j]] << endl;
+        distance+=cities[i]->distances[cities[j]];
+    }
+    cout << "  total distance " << distance << endl;
+    return distance;
+}
+
+// this will return the best length
+void AocDay9::heaps_algorithm_generate(City ** cities, int num_cities, int k, int & best_distance)
+{
+    if (k == 1)
+    {
+        int distance = calculate_distance(cities, num_cities);
+        if ((best_distance == 0) || (distance < best_distance))
+        {
+            cout << "New Best Distance " << distance << endl;
+            best_distance = distance;
+        }
+    }
+    else
+    {
+        // Generate permutations with kth unaltered
+        // Initially k == length(A)
+        heaps_algorithm_generate(cities, num_cities, k-1, best_distance);
+
+        // Generate permutations for kth swapped with each k-1 initial
+        for (int i=0; i<k-1; i++)
+        {
+            if (k%2 == 0)
+            {
+                City * tmp = cities[i];
+                cities[i] = cities[k-1];
+                cities[k-1] = tmp;
+            }
+            else
+            {
+                City * tmp = cities[0];
+                cities[0] = cities[k-1];
+                cities[k-1] = tmp;
+            }
+            heaps_algorithm_generate(cities, num_cities, k-1, best_distance);
+        }
+    }
+}
+
+int AocDay9::find_shortest_journey(City ** cities, int num_cities)
+{
+    int best_distance = 0;
+    heaps_algorithm_generate(cities, num_cities, num_cities, best_distance);
+    return best_distance;
+}
 
 string AocDay9::part1(string filename, vector<string> extra_args)
 {
@@ -89,7 +146,8 @@ string AocDay9::part1(string filename, vector<string> extra_args)
     int num_cities = parse_input(filename, cities);
     
     ostringstream out;
-    out << "";
+    int best_distance = find_shortest_journey(cities, num_cities);
+    out << best_distance;
     
     for (int i=0; i<num_cities; i++)
     {
