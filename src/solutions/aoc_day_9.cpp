@@ -96,7 +96,7 @@ int AocDay9::calculate_distance(City ** cities, int num_cities)
 }
 
 // this will return the best length
-void AocDay9::heaps_algorithm_generate(City ** cities, int num_cities, int k, int & best_distance)
+void AocDay9::heaps_algorithm_generate(City ** cities, int num_cities, int k, int & best_distance, int & worst_distance)
 {
     if (k == 1)
     {
@@ -106,12 +106,17 @@ void AocDay9::heaps_algorithm_generate(City ** cities, int num_cities, int k, in
             cout << "New Best Distance " << distance << endl;
             best_distance = distance;
         }
+        if ((worst_distance == 0) || (distance > worst_distance))
+        {
+            cout << "New Worst Distance " << distance << endl;
+            worst_distance = distance;
+        }
     }
     else
     {
         // Generate permutations with kth unaltered
         // Initially k == length(A)
-        heaps_algorithm_generate(cities, num_cities, k-1, best_distance);
+        heaps_algorithm_generate(cities, num_cities, k-1, best_distance, worst_distance);
 
         // Generate permutations for kth swapped with each k-1 initial
         for (int i=0; i<k-1; i++)
@@ -128,7 +133,7 @@ void AocDay9::heaps_algorithm_generate(City ** cities, int num_cities, int k, in
                 cities[0] = cities[k-1];
                 cities[k-1] = tmp;
             }
-            heaps_algorithm_generate(cities, num_cities, k-1, best_distance);
+            heaps_algorithm_generate(cities, num_cities, k-1, best_distance, worst_distance);
         }
     }
 }
@@ -136,8 +141,17 @@ void AocDay9::heaps_algorithm_generate(City ** cities, int num_cities, int k, in
 int AocDay9::find_shortest_journey(City ** cities, int num_cities)
 {
     int best_distance = 0;
-    heaps_algorithm_generate(cities, num_cities, num_cities, best_distance);
+    int worst_distance = 0;
+    heaps_algorithm_generate(cities, num_cities, num_cities, best_distance, worst_distance);
     return best_distance;
+}
+
+int AocDay9::find_longest_journey(City ** cities, int num_cities)
+{
+    int best_distance = 0;
+    int worst_distance = 0;
+    heaps_algorithm_generate(cities, num_cities, num_cities, best_distance, worst_distance);
+    return worst_distance;
 }
 
 string AocDay9::part1(string filename, vector<string> extra_args)
@@ -148,6 +162,23 @@ string AocDay9::part1(string filename, vector<string> extra_args)
     ostringstream out;
     int best_distance = find_shortest_journey(cities, num_cities);
     out << best_distance;
+    
+    for (int i=0; i<num_cities; i++)
+    {
+        delete cities[i];
+    }
+    
+    return out.str();
+}
+
+string AocDay9::part2(string filename, vector<string> extra_args)
+{
+    City * cities[MAX_CITIES];
+    int num_cities = parse_input(filename, cities);
+    
+    ostringstream out;
+    int worst_distance = find_longest_journey(cities, num_cities);
+    out << worst_distance;
     
     for (int i=0; i<num_cities; i++)
     {
