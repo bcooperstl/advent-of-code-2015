@@ -77,3 +77,26 @@ string AocDay10::part1(string filename, vector<string> extra_args)
     out << output.length();
     return out.str();
 }
+
+string AocDay10::part2(string filename, vector<string> extra_args)
+{
+    if (extra_args.size() != 1)
+    {
+        cerr << "Day 10 Part 2 requires 1 extra argument for the number of steps" << endl;
+        return "";
+    }
+
+    string input = read_input(filename);
+    string output;
+    int rounds = strtoul(extra_args[0].c_str(), NULL, 10);
+    for (int i=1; i<=rounds; i++)
+    {
+        output = run_step(input);
+        cout << "Round " << i << endl;
+        input = output;
+    }
+    
+    ostringstream out;
+    out << output.length();
+    return out.str();
+}
