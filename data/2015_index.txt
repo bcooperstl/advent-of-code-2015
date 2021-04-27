@@ -80,3 +80,11 @@
 11,1,test_cases/day11_test2.txt,ghjaabcc
 11,1,day11_input.txt,hepxxyzz
 11,2,day11_input.txt,heqaabcc
+12,1,test_cases/day12_test1.txt,6
+12,1,test_cases/day12_test2.txt,6
+12,1,test_cases/day12_test3.txt,3
+12,1,test_cases/day12_test4.txt,3
+12,1,test_cases/day12_test5.txt,0
+12,1,test_cases/day12_test6.txt,0
+12,1,test_cases/day12_test7.txt,0
+12,1,test_cases/day12_test8.txt,0
