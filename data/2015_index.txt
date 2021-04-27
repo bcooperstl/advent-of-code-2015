@@ -76,3 +76,5 @@
 10,1,test_cases/day10_test1.txt,6,5
 10,1,day10_input.txt,360154,40
 10,2,day10_input.txt,5103798,50
+11,1,test_cases/day11_test1.txt,abcdffaa
+11,1,test_cases/day11_test2.txt,ghjaabcc
