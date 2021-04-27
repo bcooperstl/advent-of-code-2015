@@ -154,3 +154,32 @@ string AocDay11::part1(string filename, vector<string> extra_args)
     return out.str();
 }
 
+string AocDay11::part2(string filename, vector<string> extra_args)
+{
+    char input[MAX_PASSWORD_LEN+1];
+
+    string input_str = read_input(filename);
+    
+    strncpy(input, input_str.c_str(), MAX_PASSWORD_LEN+1);
+    int length = strlen(input);
+    
+    generate_first_next_password(input, length);
+    
+    while (!is_valid_password(input, length))
+    {
+        generate_next_password(input, length);
+    }
+    
+    // purpose to find the second next password
+    generate_first_next_password(input, length);
+    
+    while (!is_valid_password(input, length))
+    {
+        generate_next_password(input, length);
+    }
+    
+    ostringstream out;
+    out << input;
+    return out.str();
+}
+
