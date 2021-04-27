@@ -76,7 +76,7 @@ void AocDay11::generate_next_password(char * input, int input_len)
                    'v', 'w', 'x', 'y', 'z', // uvwxy
                    'a'};// z
     
-    cout << "After " << input << " is " ;
+    //cout << "After " << input << " is " ;
     
     if (input[input_len-1] != 'z') // easy case; just increment the last character
     {
@@ -98,7 +98,7 @@ void AocDay11::generate_next_password(char * input, int input_len)
         }
     }
     
-    cout << input << endl;
+    //cout << input << endl;
 }
 
 bool AocDay11::is_valid_password(char * input, int input_len)
