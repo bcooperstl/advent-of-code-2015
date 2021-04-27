@@ -88,3 +88,10 @@
 12,1,test_cases/day12_test6.txt,0
 12,1,test_cases/day12_test7.txt,0
 12,1,test_cases/day12_test8.txt,0
+12,1,day12_input.txt,119433
+12,2,test_cases/day12_test1.txt,6
+12,2,test_cases/day12_test9.txt,4
+12,2,test_cases/day12_test10.txt,4
+12,2,test_cases/day12_test11.txt,0
+12,2,test_cases/day12_test12.txt,6
+12,2,day12_input.txt,68466
