@@ -95,3 +95,4 @@
 12,2,test_cases/day12_test11.txt,0
 12,2,test_cases/day12_test12.txt,6
 12,2,day12_input.txt,68466
+13,1,test_cases/day13_test1.txt,330
