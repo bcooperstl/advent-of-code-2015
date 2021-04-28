@@ -108,18 +108,18 @@ int AocDay13::parse_input(string filename, Person ** people)
 
 int AocDay13::calculate_happiness(Person ** people, int num_people)
 {
-    cout << "Calculating happiness " << endl;
+    //cout << "Calculating happiness " << endl;
     int happiness = 0;
     for (int i=0; i<num_people; i++)
     {
         int right_index = (i+1)%num_people;
         int left_index = (i-1+num_people)%num_people;
-        cout << "  " << people[i]->name << " next to " << people[right_index]->name << " allocates " << people[i]->units[people[right_index]] << " units" << endl;
-        cout << "  " << people[i]->name << " next to " << people[left_index]->name << " allocates " << people[i]->units[people[left_index]] << " units" << endl;
+        //cout << "  " << people[i]->name << " next to " << people[right_index]->name << " allocates " << people[i]->units[people[right_index]] << " units" << endl;
+        //cout << "  " << people[i]->name << " next to " << people[left_index]->name << " allocates " << people[i]->units[people[left_index]] << " units" << endl;
         
         happiness = happiness + people[i]->units[people[right_index]] + people[i]->units[people[left_index]];
     }
-    cout << " total happiness " << happiness << endl;
+    //cout << " total happiness " << happiness << endl;
     return happiness;
 }
 
@@ -136,7 +136,7 @@ void AocDay13::dump_cycle(Person ** people, int num_people)
 // The initial k value should be one less than the number of people, since the first position is fixed.
 void AocDay13::modified_heaps_algorithm_generate(Person ** people, int num_people, int k, int & best_case)
 {
-    cout << " Called with num_people=" << num_people << " k = " << k << endl;
+    //cout << " Called with num_people=" << num_people << " k = " << k << endl;
     if (k == 1)
     {
         if (compare_people_by_name(people[1], people[num_people-1]) < 0)
@@ -201,15 +201,7 @@ int AocDay13::find_best_arrangement(Person ** people, int num_people)
 {
     int best_happiness = INT_MIN;
 
-    cout << "Before sort: ";
-    dump_cycle(people, num_people);
-    cout << endl;
-
     qsort(people, num_people, sizeof(Person *), compare_people_by_name_func);
-
-    cout << "After sort: ";
-    dump_cycle(people, num_people);
-    cout << endl;
 
     modified_heaps_algorithm_generate(people, num_people, num_people-1, best_happiness);
     return best_happiness;
