@@ -30,7 +30,7 @@ class AocDay13 : public AocDay
         AocDay13();
         ~AocDay13();
         string part1(string filename, vector<string> extra_args);
-        //string part2(string filename, vector<string> extra_args);
+        string part2(string filename, vector<string> extra_args);
         static int compare_people_by_name_func(const void *left, const void *right);
         static int compare_people_by_name(Person *left, Person *right);
 };

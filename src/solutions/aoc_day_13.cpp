@@ -224,3 +224,28 @@ string AocDay13::part1(string filename, vector<string> extra_args)
     return out.str();
 }
 
+string AocDay13::part2(string filename, vector<string> extra_args)
+{
+    Person * people[MAX_PEOPLE];
+    int num_people = parse_input(filename, people);
+    people[num_people] = new Person();
+    people[num_people]->name = "Me";
+    for (int i=0; i<num_people; i++)
+    {
+        people[num_people]->units[people[i]] = 0;
+        people[i]->units[people[num_people]] = 0;
+    }
+    num_people++;
+    
+    ostringstream out;
+    int best_happiness = find_best_arrangement(people, num_people);
+    out << best_happiness;
+    
+    for (int i=0; i<num_people; i++)
+    {
+        delete people[i];
+    }
+    
+    return out.str();
+}
+
