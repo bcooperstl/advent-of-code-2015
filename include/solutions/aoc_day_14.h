@@ -15,6 +15,7 @@ namespace Day14
         int flight_speed;
         int flight_duration;
         int rest_duration;
+        int points;
     };
 }
 
@@ -25,11 +26,12 @@ class AocDay14 : public AocDay
     private:
         void parse_input(string filename, vector<Reindeer> & reindeer);
         int calculate_distance_for_time(Reindeer reindeer, int time);
+        void calculate_points(vector<Reindeer> & reindeer, int seconds);
     public:
         AocDay14();
         ~AocDay14();
         string part1(string filename, vector<string> extra_args);
-        //string part2(string filename, vector<string> extra_args);
+        string part2(string filename, vector<string> extra_args);
 };
 
 

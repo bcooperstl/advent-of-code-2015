@@ -66,7 +66,7 @@ int AocDay14::calculate_distance_for_time(Reindeer reindeer, int seconds)
     }
     distance += (reindeer.flight_speed * remaining_time);
     
-    cout << "Reindeer " << reindeer.name << " flies " << distance << " over " << seconds << " seconds" << endl;
+    //cout << "Reindeer " << reindeer.name << " flies " << distance << " over " << seconds << " seconds" << endl;
     return distance;
 }
 
@@ -96,5 +96,65 @@ string AocDay14::part1(string filename, vector<string> extra_args)
     
     ostringstream out;
     out << furthest_distance;
+    return out.str();
+}
+
+void AocDay14::calculate_points(vector<Reindeer> & reindeer, int seconds)
+{
+    int distances[10]; // no more than 10 reindeer
+    int num_reindeer = reindeer.size();
+    int max_distance_at_time;
+    for (int i=1; i<=seconds; i++)
+    {
+        max_distance_at_time = 0;
+        for (int j=0; j<num_reindeer; j++)
+        {    
+            distances[j] = calculate_distance_for_time(reindeer[j], i);
+            if (distances[j] >= max_distance_at_time)
+            {
+                max_distance_at_time = distances[j];
+            }
+        }
+        for (int j=0; j<num_reindeer; j++)
+        {
+            if (distances[j] == max_distance_at_time)
+            {
+                reindeer[j].points++;
+            }
+        }
+    }
+}
+
+string AocDay14::part2(string filename, vector<string> extra_args)
+{
+    if (extra_args.size() != 1)
+    {
+        cerr << "Day 14 Part 1 requires 1 extra argument for the number of steps" << endl;
+        return "";
+    }
+
+    int seconds = strtoul(extra_args[0].c_str(), NULL, 10);
+    vector<Reindeer> reindeer;
+    
+    parse_input(filename, reindeer);
+    
+    for (int i=0; i<reindeer.size(); i++)
+    {
+        reindeer[i].points=0; // start all with 0 points
+    }
+    
+    calculate_points(reindeer, seconds);
+
+    int most_points = 0;
+    for (int i=0; i<reindeer.size(); i++)
+    {
+        if (reindeer[i].points > most_points)
+        {
+            most_points = reindeer[i].points;
+        }
+    }
+    
+    ostringstream out;
+    out << most_points;
     return out.str();
 }
