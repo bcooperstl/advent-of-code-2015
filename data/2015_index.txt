@@ -98,3 +98,5 @@
 13,1,test_cases/day13_test1.txt,330
 13,1,day13_input.txt,664
 13,2,day13_input.txt,640
+#extra parameter for day 14 part 1 is the number of seconds to run
+14,1,test_cases/day14_test1.txt,1120,1000
