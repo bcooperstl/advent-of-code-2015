@@ -34,6 +34,7 @@ vector<string> FileUtils::split_line_to_strings(string input, char * delimiters,
     }
     
     bool in_quote = false;
+    bool last_matched = false;
     ostringstream current;
     while (*pos != '\0')
     {
@@ -72,19 +73,24 @@ vector<string> FileUtils::split_line_to_strings(string input, char * delimiters,
                 }
                 if (matched)
                 {
-                    // ABCDE,ABCDE,ABCDE
-                    // first string goes from 0 to 4...construct as string(0,5). pos will be 5 for the comma. so 5-0=5
-                    // second string goes from 6 to 10...construct as string(6,5)...pos wil be 11 for the comma. so 11-6=5
-                    // third string goes from 12 to 16...construct as string(12,5) but need to do this out of loop as its the last string
+                    if (!last_matched)
+                    {
+                        // ABCDE,ABCDE,ABCDE
+                        // first string goes from 0 to 4...construct as string(0,5). pos will be 5 for the comma. so 5-0=5
+                        // second string goes from 6 to 10...construct as string(6,5)...pos wil be 11 for the comma. so 11-6=5
+                        // third string goes from 12 to 16...construct as string(12,5) but need to do this out of loop as its the last string
     #ifdef DEBUG_RUNNER
-                    cout << "appending [" << current.str() << "] as a string" << endl;
+                        cout << "appending [" << current.str() << "] as a string" << endl;
     #endif
-                    splits.push_back(current.str());
-                    current = ostringstream();
+                        splits.push_back(current.str());
+                        current = ostringstream();
+                        last_matched = true;
+                    }
                 }
                 else
                 {
                     current << (*pos);
+                    last_matched = false;
                 }
             }
         }
