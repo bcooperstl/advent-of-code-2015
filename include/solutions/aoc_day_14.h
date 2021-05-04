@@ -5,8 +5,6 @@
 
 #include "aoc_day.h"
 
-#define MAX_PEOPLE 10
-
 namespace Day14
 {
     struct Reindeer
