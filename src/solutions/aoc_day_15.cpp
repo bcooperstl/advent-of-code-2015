@@ -171,3 +171,112 @@ string AocDay15::part1(string filename, vector<string> extra_args)
     out << high_score;
     return out.str();
 }
+
+string AocDay15::part2(string filename, vector<string> extra_args)
+{
+    Ingredient * ingredients[MAX_INGREDIENTS];
+    int num_ingredients = parse_input(filename, ingredients);
+    
+    long high_score = 0;
+    long target_calories = 500;
+    
+    if (num_ingredients == 2)
+    {
+        long quantities[2];
+        for (quantities[0] = 0; quantities[0]<=100; quantities[0]++)
+        {
+            quantities[1] = 100 - quantities[0];
+            long total_calories   = quantities[0]*ingredients[0]->calories   + quantities[1]*ingredients[1]->calories;
+            if (total_calories == target_calories)
+            {
+                long total_capacity   = quantities[0]*ingredients[0]->capacity   + quantities[1]*ingredients[1]->capacity;
+                long total_durability = quantities[0]*ingredients[0]->durability + quantities[1]*ingredients[1]->durability;
+                long total_flavor     = quantities[0]*ingredients[0]->flavor     + quantities[1]*ingredients[1]->flavor;
+                long total_texture    = quantities[0]*ingredients[0]->texture    + quantities[1]*ingredients[1]->texture;
+                if (total_capacity < 0)
+                {
+                    total_capacity = 0;
+                }
+                if (total_durability < 0)
+                {
+                    total_durability = 0;
+                }
+                if (total_flavor < 0)
+                {
+                    total_flavor = 0;
+                }
+                if (total_texture < 0)
+                {
+                    total_texture = 0;
+                }
+                long score = total_capacity * total_durability * total_flavor * total_texture;
+    
+                if (score > high_score)
+                {
+                    cout << "Setting new high score of " << score << " with " << quantities[0] << " of " << ingredients[0]->name << " and " << quantities[1] << " of " << ingredients[1]->name << endl;
+                    high_score = score;                
+                }
+            }
+        }
+    }
+    else if (num_ingredients == 4)
+    {
+        long quantities[4];
+        for (quantities[0] = 0; quantities[0]<=100; quantities[0]++)
+        {
+            for (quantities[1] = 0; quantities[1]<=(100 - quantities[0]); quantities[1]++)
+            {
+                for (quantities[2] = 0; quantities[2]<=(100 - quantities[0] - quantities[1]); quantities[2]++)
+                {
+                    quantities[3] = 100 - quantities[0] - quantities[1] - quantities[2];
+                    long total_calories   = quantities[0]*ingredients[0]->calories   + quantities[1]*ingredients[1]->calories   + quantities[2]*ingredients[2]->calories   + quantities[3]*ingredients[3]->calories;
+                    if (total_calories == target_calories)
+                    {
+                        long total_capacity   = quantities[0]*ingredients[0]->capacity   + quantities[1]*ingredients[1]->capacity   + quantities[2]*ingredients[2]->capacity   + quantities[3]*ingredients[3]->capacity;
+                        long total_durability = quantities[0]*ingredients[0]->durability + quantities[1]*ingredients[1]->durability + quantities[2]*ingredients[2]->durability + quantities[3]*ingredients[3]->durability;
+                        long total_flavor     = quantities[0]*ingredients[0]->flavor     + quantities[1]*ingredients[1]->flavor     + quantities[2]*ingredients[2]->flavor     + quantities[3]*ingredients[3]->flavor;
+                        long total_texture    = quantities[0]*ingredients[0]->texture    + quantities[1]*ingredients[1]->texture    + quantities[2]*ingredients[2]->texture    + quantities[3]*ingredients[3]->texture;
+                        if (total_capacity < 0)
+                        {
+                            total_capacity = 0;
+                        }
+                        if (total_durability < 0)
+                        {
+                            total_durability = 0;
+                        }
+                        if (total_flavor < 0)
+                        {
+                            total_flavor = 0;
+                        }
+                        if (total_texture < 0)
+                        {
+                            total_texture = 0;
+                        }
+                        long score = total_capacity * total_durability * total_flavor * total_texture;
+                        if (score > high_score)
+                        {
+                            cout << "Setting new high score of " << score << " with " << quantities[0] << " of " << ingredients[0]->name 
+                            << " and " << quantities[1] << " of " << ingredients[1]->name 
+                            << " and " << quantities[2] << " of " << ingredients[2]->name 
+                            << " and " << quantities[3] << " of " << ingredients[3]->name << endl;
+                            high_score = score;
+                        }
+                    }
+                }
+            }
+        }        
+    }
+    else
+    {
+        cerr << "INVALID NUMBER OF INGREDIENTS " << num_ingredients << endl;
+    }
+    
+    for (int i=0; i<num_ingredients; i++)
+    {
+        delete ingredients[i];
+    }
+    
+    ostringstream out;
+    out << high_score;
+    return out.str();
+}
