@@ -103,3 +103,4 @@
 14,1,day14_input.txt,2640,2503
 14,2,test_cases/day14_test1.txt,689,1000
 14,2,day14_input.txt,1102,2503
+15,1,test_cases/day15_test1.txt,62842880
