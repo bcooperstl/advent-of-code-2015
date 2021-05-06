@@ -109,3 +109,4 @@
 15,2,day15_input.txt,117936
 16,1,test_cases/day16_test1.txt,3
 16,1,day16_input.txt,213
+16,2,day16_input.txt,323
