@@ -136,7 +136,7 @@ namespace Day16
         }
     }
     
-    bool Sue::is_match(const Sue & other)
+    bool Sue::is_match_part1(const Sue & other)
     {
         return ((other.m_children    == UNDEF_QUANTITY || other.m_children    == m_children) &&
                 (other.m_cats        == UNDEF_QUANTITY || other.m_cats        == m_cats) &&
@@ -146,6 +146,20 @@ namespace Day16
                 (other.m_vizslas     == UNDEF_QUANTITY || other.m_vizslas     == m_vizslas) &&
                 (other.m_goldfish    == UNDEF_QUANTITY || other.m_goldfish    == m_goldfish) &&
                 (other.m_trees       == UNDEF_QUANTITY || other.m_trees       == m_trees) &&
+                (other.m_cars        == UNDEF_QUANTITY || other.m_cars        == m_cars) &&
+                (other.m_perfumes    == UNDEF_QUANTITY || other.m_perfumes    == m_perfumes));
+    }
+
+    bool Sue::is_match_part2(const Sue & other)
+    {
+        return ((other.m_children    == UNDEF_QUANTITY || other.m_children    == m_children) &&
+                (other.m_cats        == UNDEF_QUANTITY || other.m_cats        > m_cats) &&
+                (other.m_samoyeds    == UNDEF_QUANTITY || other.m_samoyeds    == m_samoyeds) &&
+                (other.m_pomeranians == UNDEF_QUANTITY || other.m_pomeranians < m_pomeranians) &&
+                (other.m_akitas      == UNDEF_QUANTITY || other.m_akitas      == m_akitas) &&
+                (other.m_vizslas     == UNDEF_QUANTITY || other.m_vizslas     == m_vizslas) &&
+                (other.m_goldfish    == UNDEF_QUANTITY || other.m_goldfish    < m_goldfish) &&
+                (other.m_trees       == UNDEF_QUANTITY || other.m_trees       > m_trees) &&
                 (other.m_cars        == UNDEF_QUANTITY || other.m_cars        == m_cars) &&
                 (other.m_perfumes    == UNDEF_QUANTITY || other.m_perfumes    == m_perfumes));
     }
@@ -230,7 +244,31 @@ string AocDay16::part1(string filename, vector<string> extra_args)
     
     for (int i=0; i<possiblilities.size(); i++)
     {
-        if (target.is_match(possiblilities[i]))
+        if (target.is_match_part1(possiblilities[i]))
+        {
+            cout << "Match found for sue " << possiblilities[i].get_number() << endl;
+            match_number = possiblilities[i].get_number();
+        }
+    }
+    
+    ostringstream out;
+    out << match_number;
+    return out.str();
+}
+
+
+string AocDay16::part2(string filename, vector<string> extra_args)
+{
+    vector<Sue> possiblilities;
+    parse_input(filename, possiblilities);
+    
+    int match_number = 0;
+    
+    Sue target = create_target_sue();
+    
+    for (int i=0; i<possiblilities.size(); i++)
+    {
+        if (target.is_match_part2(possiblilities[i]))
         {
             cout << "Match found for sue " << possiblilities[i].get_number() << endl;
             match_number = possiblilities[i].get_number();

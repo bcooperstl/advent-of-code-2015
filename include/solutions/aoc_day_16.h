@@ -40,7 +40,8 @@ namespace Day16
             ~Sue();
             int get_number();
             void set_value(string field, int value);
-            bool is_match(const Sue & other);
+            bool is_match_part1(const Sue & other);
+            bool is_match_part2(const Sue & other);
     };
 }
 
@@ -55,7 +56,7 @@ class AocDay16 : public AocDay
         AocDay16();
         ~AocDay16();
         string part1(string filename, vector<string> extra_args);
-        //string part2(string filename, vector<string> extra_args);
+        string part2(string filename, vector<string> extra_args);
 };
 
 
