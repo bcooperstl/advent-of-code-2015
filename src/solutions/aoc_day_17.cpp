@@ -50,16 +50,16 @@ int AocDay17::number_of_combinations_to_target(vector<long> & values, int positi
     
     if (current_value > target)
     {
-        cout << "At position " << position << " searching for target " << target << " skipping current_value " << current_value << " because it is larger than target" << endl;
+        //cout << "At position " << position << " searching for target " << target << " skipping current_value " << current_value << " because it is larger than target" << endl;
     }
     if (current_value == target)
     {
-        cout << "At position " << position << " searching for target " << target << " adding one because current_value " << current_value << " matches the target" << endl;
+        //cout << "At position " << position << " searching for target " << target << " adding one because current_value " << current_value << " matches the target" << endl;
         subtotal += 1;
     }
     if (current_value < target)
     {
-        cout << "At position " << position << " searching for target " << target << " using current_value " << current_value << " and searching for next level" << endl;
+        //cout << "At position " << position << " searching for target " << target << " using current_value " << current_value << " and searching for next level" << endl;
         subtotal += number_of_combinations_to_target(values, position+1, target-current_value);
     }
     
@@ -67,7 +67,7 @@ int AocDay17::number_of_combinations_to_target(vector<long> & values, int positi
     // total with skipping at given position
     subtotal += number_of_combinations_to_target(values, position+1, target);
     
-    cout << "At position " << position << " searching for target " << target << " returning " << subtotal << " total possibilities" << endl;
+    //cout << "At position " << position << " searching for target " << target << " returning " << subtotal << " total possibilities" << endl;
     return subtotal;
 }
 
