@@ -110,3 +110,5 @@
 16,1,test_cases/day16_test1.txt,3
 16,1,day16_input.txt,213
 16,2,day16_input.txt,323
+#extra parameter for day 17 part 1 is the number liters total
+17,1,test_cases/day17_test1.txt,4,25
