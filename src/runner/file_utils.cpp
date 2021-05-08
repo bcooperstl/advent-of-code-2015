@@ -124,6 +124,23 @@ bool FileUtils::read_as_list_of_strings(string filename, vector<string> & lines)
     return true;
 }
 
+bool FileUtils::read_as_list_of_longs(string filename, vector<long> & values)
+{
+    vector<string> lines;
+    if (!read_as_list_of_strings(filename, lines))
+    {
+        return false;
+    }
+    
+    for (int i=0; i<lines.size(); i++)
+    {
+        values.push_back(strtol(lines[i].c_str(), NULL, 10));
+    }
+    
+    return true;
+}
+
+
 bool FileUtils::read_as_list_of_split_strings(string filename, vector<vector<string>> & split_strings, char delimiter, char quote_char, char comment_char)
 {
     return read_as_list_of_split_strings(filename, split_strings, &delimiter, 1, quote_char, comment_char);
