@@ -72,11 +72,22 @@ void AocDay18::run_rules(Screen * screen)
     return;
 }
 
+void AocDay18::turn_on_corners(Screen * screen)
+{
+    screen->set(screen->get_min_x(), screen->get_min_y(), LIGHT_ON);
+    screen->set(screen->get_min_x(), screen->get_max_y(), LIGHT_ON);
+    screen->set(screen->get_max_x(), screen->get_min_y(), LIGHT_ON);
+    screen->set(screen->get_max_x(), screen->get_max_y(), LIGHT_ON);
+    
+    return;
+}
+
+
 string AocDay18::part1(string filename, vector<string> extra_args)
 {
     if (extra_args.size() != 1)
     {
-        cerr << "Day 18 Part 2 requires 1 extra arguments: the number of iterations to run" << endl;
+        cerr << "Day 18 Part 1 requires 1 extra arguments: the number of iterations to run" << endl;
         return "";
     }
 
@@ -94,6 +105,42 @@ string AocDay18::part1(string filename, vector<string> extra_args)
     for (int i=1; i<=iterations; i++)
     {
         run_rules(&screen);
+        cout << "After iteration " << i << ":" << endl;
+        screen.display();
+    }
+    
+    int on_count = screen.num_matching(LIGHT_ON);
+    
+    ostringstream out;
+    out << on_count;
+    return out.str();
+}
+
+string AocDay18::part2(string filename, vector<string> extra_args)
+{
+    if (extra_args.size() != 1)
+    {
+        cerr << "Day 18 Part 2 requires 1 extra arguments: the number of iterations to run" << endl;
+        return "";
+    }
+
+    int iterations = strtol(extra_args[0].c_str(), NULL, 10);
+
+    Screen screen;
+    
+    vector<string> input = read_input(filename);
+    
+    screen.load(input);
+    
+    turn_on_corners(&screen);
+    
+    cout << "Start state:" << endl;
+    screen.display();
+    
+    for (int i=1; i<=iterations; i++)
+    {
+        run_rules(&screen);
+        turn_on_corners(&screen);
         cout << "After iteration " << i << ":" << endl;
         screen.display();
     }

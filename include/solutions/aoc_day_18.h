@@ -12,11 +12,12 @@ class AocDay18 : public AocDay
     private:
         vector<string> read_input(string filename);
         void run_rules(Screen * screen);
+        void turn_on_corners(Screen * screen);
     public:
         AocDay18();
         ~AocDay18();
         string part1(string filename, vector<string> extra_args);
-        //string part2(string filename, vector<string> extra_args);
+        string part2(string filename, vector<string> extra_args);
 };
 
 
