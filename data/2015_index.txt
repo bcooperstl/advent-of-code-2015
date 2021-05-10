@@ -115,3 +115,8 @@
 17,1,day17_input.txt,1638
 17,2,test_cases/day17_test1.txt,3,25
 17,2,day17_input.txt,17
+#2nd extra parameter for day 18 part 1 is number of steps to run
+18,1,test_cases/day18_test1.txt,11,1
+18,1,test_cases/day18_test1.txt,8,2
+18,1,test_cases/day18_test1.txt,4,3
+18,1,test_cases/day18_test1.txt,4,4
