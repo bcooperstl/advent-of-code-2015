@@ -84,8 +84,9 @@ set<string> AocDay19::run_1_round(string input, map<string, vector<string>> & ru
             lookup = rules.find(target);
             if (lookup == rules.end())
             {
-                cerr << "Target string of " << target << " not found. Check the input format " << endl;
-                return options;
+                cerr << " Skipping character of " << input.substr(pos, 1) << " at position " << pos << " because it has no match and should remain" << endl;
+                pos++;
+                continue;
             }
         }
         
