@@ -71,7 +71,7 @@ set<string> AocDay19::run_1_round(string input, map<string, vector<string>> & ru
     int length = input.length();
     int pos = 0;
     
-    cout << "Running rules on " << input << endl;
+    //cout << "Running rules on " << input << endl;
     while (pos < length)
     {
         int chars_used = 1;
@@ -84,7 +84,7 @@ set<string> AocDay19::run_1_round(string input, map<string, vector<string>> & ru
             lookup = rules.find(target);
             if (lookup == rules.end())
             {
-                cerr << " Skipping character of " << input.substr(pos, 1) << " at position " << pos << " because it has no match and should remain" << endl;
+                //cerr << " Skipping character of " << input.substr(pos, 1) << " at position " << pos << " because it has no match and should remain" << endl;
                 pos++;
                 continue;
             }
@@ -94,7 +94,7 @@ set<string> AocDay19::run_1_round(string input, map<string, vector<string>> & ru
         {
             string dupe = input;
             string replacement = dupe.replace(pos, chars_used, *rules_iter);
-            cout << " Replacing " << target << " at " << pos << " with " << *rules_iter << " gives " << replacement << endl;
+            //cout << " Replacing " << target << " at " << pos << " with " << *rules_iter << " gives " << replacement << endl;
             options.insert(replacement);
         }
         pos+=chars_used;
@@ -114,5 +114,80 @@ string AocDay19::part1(string filename, vector<string> extra_args)
     
     ostringstream out;
     out << single_replacements.size();
+    return out.str();
+}
+
+string AocDay19::part2(string filename, vector<string> extra_args)
+{
+    map<int, set<string>> history;
+    map<string, vector<string>> rules;
+    string target;
+    
+    parse_input(filename, rules, target);
+    
+    set<string> start;
+    start.insert("e");
+    
+    history[0]=start;
+    
+    int steps = 1;
+    while (1)
+    {
+        cout << "Working round " << steps << endl;
+        set<string> inputs = history[steps-1];
+        cout << " There are " << inputs.size() << " inputs to run through" << endl;
+        
+        if (inputs.size() == 0)
+        {
+            cerr << " NO INPUT TO RUN! " << endl;
+            break;
+        }
+        
+        
+        
+        set<string> combined;
+        
+        for (set<string>::iterator input_pos = inputs.begin(); input_pos != inputs.end(); ++input_pos)
+        {
+            string input = *input_pos;
+            set<string> replacements = run_1_round(input, rules);
+            //cout << "  Input " << input << " has " << replacements.size() << " replacements" << endl;
+            for (set<string>::iterator repl_pos = replacements.begin(); repl_pos != replacements.end(); ++repl_pos)
+            {
+                string replacement = *repl_pos;
+                if (combined.find(replacement) != combined.end())
+                {
+                    //cout << "   Replacement " << replacement << " already found at this level...skipping" << endl;
+                    continue;
+                }
+                bool history_found = false;
+                for (int prior=steps-1; prior>=1; prior--)
+                {
+                    if (history[prior].find(replacement) != history[prior].end())
+                    {
+                        //cout << "   Replacement " << replacement << " already found at prior level " << prior << "...skipping" << endl;
+                        history_found = true;
+                        break;
+                    }
+                }
+                if (history_found)
+                {
+                    continue;
+                }
+                //cout << "   Replacement " << replacement << " is new....adding" << endl;
+                combined.insert(replacement);
+            }
+        }
+        if (combined.find(target) != combined.end())
+        {
+            cout << " TARGET FOUND" << endl;
+            break;
+        }
+        history[steps]=combined;
+        steps++;
+    }
+    
+    ostringstream out;
+    out << steps;
     return out.str();
 }
