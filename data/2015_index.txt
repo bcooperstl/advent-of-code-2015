@@ -133,3 +133,5 @@
 19,1,test_cases/day19_test3.txt,4
 19,1,test_cases/day19_test4.txt,3
 19,1,day19_input.txt,509
+19,2,test_cases/day19_test5.txt,3
+19,2,test_cases/day19_test6.txt,6
