@@ -7,6 +7,7 @@
 #include <cstring>
 #include <set>
 #include <map>
+#include <algorithm>
 
 #include "aoc_day_19.h"
 #include "file_utils.h"
@@ -117,77 +118,132 @@ string AocDay19::part1(string filename, vector<string> extra_args)
     return out.str();
 }
 
+/*
+ look through the reverse_rules. if any are found in input, apply them and then call recursively.
+ short circuits to exit recursion:
+    num_replacements >= best_replacements
+    input matches a start string (only check if input length is less than or equal to max_start_string_length
+
+*/
+    
+bool AocDay19::path_found_recursive(string input, vector<pair<string, string>> & reverse_rules, vector<string> & start_strings, int max_start_string_length, int num_replacements, int & best_replacements, set<string> & tried_and_false)
+{
+    //cout << "Processing Input " << input << " num_replacements " << num_replacements << endl;
+    bool match_found = false;
+    
+    if (tried_and_false.find(input) != tried_and_false.end())
+    {
+        return false;
+    }
+    
+    
+    if (num_replacements >= best_replacements)
+    {
+        //cout << " Input " << input << " num_replacements " << num_replacements << " short circuiting because worse than best" << endl;
+        return false; // already have something better
+    }
+    
+    if (input.length() <= max_start_string_length)
+    {
+        for (int i=0; i<start_strings.size(); i++)
+        {
+            if (input == start_strings[i])
+            {
+                // we have a match at num_replacements + 1; the + 1 is for the replacement to e
+                cout << " Input " << input << " num_replacements " << num_replacements << " match found after " << num_replacements + 1  << " replacements with " << start_strings[i] << endl;
+                best_replacements = num_replacements + 1;
+                return true;
+            }
+        }
+    }
+    
+    for (int i=0; i<reverse_rules.size(); i++)
+    {
+        size_t pos = input.find(reverse_rules[i].first);
+        if (pos != string::npos)
+        {
+            //cout << " Input " << input << " num_replacements " << num_replacements << " using match of " << reverse_rules[i].first << "->" << reverse_rules[i].second << " at " << pos << endl;
+            string dupe = input;
+            string replacement = dupe.replace(pos, reverse_rules[i].first.length(), reverse_rules[i].second);
+            match_found = match_found || path_found_recursive(replacement, reverse_rules, start_strings, max_start_string_length, num_replacements+1, best_replacements, tried_and_false);
+        }
+    }
+    
+    if (!match_found)
+    {
+        //cout << "Adding " << input << " to tried and false" << endl;
+        tried_and_false.insert(input);
+    }
+
+    return match_found;
+}
+
+bool AocDay19::sort_pair_length_order(const pair<string,string> &left, const pair<string,string> &right)
+{
+    if (left.first.length() == right.first.length())
+    {
+        return (left.first < right.first);
+    }
+    else
+    {
+        return (left.first.length() > right.first.length()); // want larger strings first to be greedy
+    }
+}
+
 string AocDay19::part2(string filename, vector<string> extra_args)
 {
-    map<int, set<string>> history;
     map<string, vector<string>> rules;
     string target;
     
+    vector<pair<string, string>> reverse_rules;
+    vector<string> start_strings;
+    int max_start_string_length = 0;
+    
+    set<string> tried_and_false;
+    
     parse_input(filename, rules, target);
     
-    set<string> start;
-    start.insert("e");
+    int best_replacements = target.length();
     
-    history[0]=start;
-    
-    int steps = 1;
-    while (1)
+    for (map<string, vector<string>>::iterator pos = rules.begin(); pos != rules.end(); ++pos)
     {
-        cout << "Working round " << steps << endl;
-        set<string> inputs = history[steps-1];
-        cout << " There are " << inputs.size() << " inputs to run through" << endl;
-        
-        if (inputs.size() == 0)
+        string value = pos->first;
+        if (value == "e")
         {
-            cerr << " NO INPUT TO RUN! " << endl;
-            break;
-        }
-        
-        
-        
-        set<string> combined;
-        
-        for (set<string>::iterator input_pos = inputs.begin(); input_pos != inputs.end(); ++input_pos)
-        {
-            string input = *input_pos;
-            set<string> replacements = run_1_round(input, rules);
-            //cout << "  Input " << input << " has " << replacements.size() << " replacements" << endl;
-            for (set<string>::iterator repl_pos = replacements.begin(); repl_pos != replacements.end(); ++repl_pos)
+            for (vector<string>::iterator pos2 = pos->second.begin(); pos2 != pos->second.end(); ++pos2)
             {
-                string replacement = *repl_pos;
-                if (combined.find(replacement) != combined.end())
+                string start_string = *pos2;
+                cout << " Start string " << start_string << " added" << endl;
+                start_strings.push_back(start_string);
+                if (start_string.length() > max_start_string_length)
                 {
-                    //cout << "   Replacement " << replacement << " already found at this level...skipping" << endl;
-                    continue;
+                    max_start_string_length = start_string.length();
+                    cout << "  new max start length of " << max_start_string_length << endl;
                 }
-                bool history_found = false;
-                for (int prior=steps-1; prior>=1; prior--)
-                {
-                    if (history[prior].find(replacement) != history[prior].end())
-                    {
-                        //cout << "   Replacement " << replacement << " already found at prior level " << prior << "...skipping" << endl;
-                        history_found = true;
-                        break;
-                    }
-                }
-                if (history_found)
-                {
-                    continue;
-                }
-                //cout << "   Replacement " << replacement << " is new....adding" << endl;
-                combined.insert(replacement);
             }
         }
-        if (combined.find(target) != combined.end())
+        else
         {
-            cout << " TARGET FOUND" << endl;
-            break;
+            for (vector<string>::iterator pos2 = pos->second.begin(); pos2 != pos->second.end(); ++pos2)
+            {
+                string repl = *pos2;
+                cout << " Reverse rule from " << repl << " to " << value << " added" << endl;
+                reverse_rules.push_back(make_pair(repl, value));
+            }
         }
-        history[steps]=combined;
-        steps++;
     }
     
+    sort(reverse_rules.begin(), reverse_rules.end(), sort_pair_length_order);
+    cout << "Reverse rules after sort: " << endl;
+    for (int i=0; i<reverse_rules.size(); i++)
+    {
+        cout << reverse_rules[i].first << " --> " << reverse_rules[i].second << endl;
+    }
+    
+    bool ret = path_found_recursive(target, reverse_rules, start_strings, max_start_string_length, 0, best_replacements, tried_and_false);
+    cout << "Returned " << ret << " with best_replacements " << best_replacements << endl;
+    
     ostringstream out;
-    out << steps;
+    out << best_replacements;
     return out.str();
 }
