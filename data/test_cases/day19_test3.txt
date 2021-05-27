@@ -1,0 +1,5 @@
+Ha => HaOr
+Ha => OrHa
+Or => HaHa
+
+HaOrHa
