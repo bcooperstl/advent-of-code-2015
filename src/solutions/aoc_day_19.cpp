@@ -180,6 +180,55 @@ bool AocDay19::path_found_recursive(string input, vector<pair<string, string>> &
 
 bool AocDay19::sort_pair_length_order(const pair<string,string> &left, const pair<string,string> &right)
 {
+    int counters;
+    int num_left=0;
+    int num_right=0;
+    
+    // count occurrences of Rn, Y, and Ar
+    
+    for (int i=0; i<left.first.length(); i++)
+    {
+        if (i < left.first.length() -1)
+        {
+            if (left.first[i]=='R' && left.first[i+1]=='n') // Rn
+            {
+                num_left++;
+            }
+            if (left.first[i]=='A' && left.first[i+1]=='r') // Ar
+            {
+                num_left++;
+            }
+        }
+        if (left.first[i]=='Y') // Y
+        {
+            num_left++;
+        }
+    }
+    
+    for (int i=0; i<right.first.length(); i++)
+    {
+        if (i < right.first.length() -1)
+        {
+            if (right.first[i]=='R' && right.first[i+1]=='n') // Rn
+            {
+                num_right++;
+            }
+            if (right.first[i]=='A' && right.first[i+1]=='r') // Ar
+            {
+                num_right++;
+            }
+        }
+        if (right.first[i]=='Y') // Y
+        {
+            num_right++;
+        }
+    }
+    
+    if (num_left != num_right)
+    {
+        return num_left > num_right; // if the left one has more matches, it should be first.
+    }
+    
     if (left.first.length() == right.first.length())
     {
         return (left.first < right.first);
@@ -188,6 +237,40 @@ bool AocDay19::sort_pair_length_order(const pair<string,string> &left, const pai
     {
         return (left.first.length() > right.first.length()); // want larger strings first to be greedy
     }
+}
+
+bool AocDay19::path_found_2(string input, vector<pair<string, string>> & reverse_rules, int & best_replacements)
+{
+    cout << "Processing Input " << input << endl;
+    
+    bool found = true;
+    int counter = 0;
+    while (input.length() > 1)
+    {
+        bool did_something = false;
+        for (int i=0; i<reverse_rules.size(); i++)
+        {
+            size_t pos = input.find(reverse_rules[i].first);
+            if (pos != string::npos)
+            {
+                cout << " Input " << input << " using match of " << reverse_rules[i].first << "->" << reverse_rules[i].second << " at " << pos << endl;
+                input.replace(pos, reverse_rules[i].first.length(), reverse_rules[i].second);
+                did_something = true;
+                counter++;
+            }
+        }
+        if (!did_something)
+        {
+            found = false;
+            break;
+        }
+    }
+    
+    if (found)
+    {
+        best_replacements = counter;
+    }
+    return found;
 }
 
 string AocDay19::part2(string filename, vector<string> extra_args)
@@ -208,28 +291,11 @@ string AocDay19::part2(string filename, vector<string> extra_args)
     for (map<string, vector<string>>::iterator pos = rules.begin(); pos != rules.end(); ++pos)
     {
         string value = pos->first;
-        if (value == "e")
+        for (vector<string>::iterator pos2 = pos->second.begin(); pos2 != pos->second.end(); ++pos2)
         {
-            for (vector<string>::iterator pos2 = pos->second.begin(); pos2 != pos->second.end(); ++pos2)
-            {
-                string start_string = *pos2;
-                cout << " Start string " << start_string << " added" << endl;
-                start_strings.push_back(start_string);
-                if (start_string.length() > max_start_string_length)
-                {
-                    max_start_string_length = start_string.length();
-                    cout << "  new max start length of " << max_start_string_length << endl;
-                }
-            }
-        }
-        else
-        {
-            for (vector<string>::iterator pos2 = pos->second.begin(); pos2 != pos->second.end(); ++pos2)
-            {
-                string repl = *pos2;
-                cout << " Reverse rule from " << repl << " to " << value << " added" << endl;
-                reverse_rules.push_back(make_pair(repl, value));
-            }
+            string repl = *pos2;
+            cout << " Reverse rule from " << repl << " to " << value << " added" << endl;
+            reverse_rules.push_back(make_pair(repl, value));
         }
     }
     
@@ -240,8 +306,14 @@ string AocDay19::part2(string filename, vector<string> extra_args)
         cout << reverse_rules[i].first << " --> " << reverse_rules[i].second << endl;
     }
     
-    bool ret = path_found_recursive(target, reverse_rules, start_strings, max_start_string_length, 0, best_replacements, tried_and_false);
-    cout << "Returned " << ret << " with best_replacements " << best_replacements << endl;
+    bool ret = path_found_2(target, reverse_rules, best_replacements);
+    while (!ret)
+    {
+        random_shuffle(reverse_rules.begin(), reverse_rules.end());
+        ret = path_found_2(target, reverse_rules, best_replacements);
+        cout << "Returned " << ret << " with best_replacements " << best_replacements << endl;
+    }
+    
     
     ostringstream out;
     out << best_replacements;
