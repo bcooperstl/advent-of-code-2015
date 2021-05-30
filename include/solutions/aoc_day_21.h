@@ -56,6 +56,7 @@ namespace Day21
             void set_weapon(Item * weapon);
             void set_armor(Item * armor);
             void set_rings(Item * ring1, Item * ring2);
+            void display_equipment();
     };        
 }
 
@@ -66,12 +67,15 @@ class AocDay21 : public AocDay
     private:
         //Item m_null_item;
         Item m_weapons[NUM_WEAPONS+1]; // add 1 for no item
-        Item m_armor[NUM_ARMOR+1]; // add 1 for no item
+        Item m_armors[NUM_ARMOR+1]; // add 1 for no item
         Item m_rings[NUM_RINGS+1]; // add 1 for no item
         
         void init_items();
-        
         void parse_input(string filename, int & enemy_hit_points, int & enemy_damage, int & enemy_armor);
+        
+        int get_cost(Item * weapon, Item * armor, Item * ring1, Item * ring2);
+        
+        bool battle(Player * player, Enemy * enemy);
     public:
         AocDay21();
         ~AocDay21();
