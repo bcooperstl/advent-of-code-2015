@@ -141,3 +141,4 @@
 20,1,day20_input.txt,665280
 20,2,day20_input.txt,705600
 21,1,day21_input.txt,111
+21,2,day21_input.txt,188
