@@ -54,11 +54,11 @@ string AocDay20::part1(string filename, vector<string> extra_args)
             current++;
         }
         
-        cout << "House " << house << " got " << sum << " presents." << endl;
+        //cout << "House " << house << " got " << sum << " presents." << endl;
         
         if (sum >= target)
         {
-            cout << "Found solution at " << house << endl;
+            cout << "Found solution at " << house << " with " << sum << " presents." << endl;
             break;
         }
         
