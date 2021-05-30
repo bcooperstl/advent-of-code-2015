@@ -69,3 +69,48 @@ string AocDay20::part1(string filename, vector<string> extra_args)
     out << house;
     return out.str();
 }
+
+string AocDay20::part2(string filename, vector<string> extra_args)
+{
+    long target = read_input(filename);
+    
+    long house = 1;
+    while (1)
+    {
+        long sum = 0;
+        long elf = 1;
+        while ((elf * elf) <= house)
+        {
+            if (house % elf == 0)
+            {
+                long dividend = house / elf;
+                if (dividend <= 50) // within the first 50
+                {
+                    sum += (elf * 11);
+                }
+                if (dividend != elf)
+                {
+                    if (elf <= 50)
+                    {
+                        sum += (dividend * 11);
+                    }
+                }
+            }
+            elf++;
+        }
+        
+        //cout << "House " << house << " got " << sum << " presents." << endl;
+        
+        if (sum >= target)
+        {
+            cout << "Found solution at " << house << " with " << sum << " presents." << endl;
+            break;
+        }
+        
+        house++;
+    }
+    
+    ostringstream out;
+    out << house;
+    return out.str();
+}
