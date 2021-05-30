@@ -66,7 +66,7 @@ class AocDay21 : public AocDay
 {
     private:
         //Item m_null_item;
-        Item m_weapons[NUM_WEAPONS+1]; // add 1 for no item
+        Item m_weapons[NUM_WEAPONS]; // must by a weapon
         Item m_armors[NUM_ARMOR+1]; // add 1 for no item
         Item m_rings[NUM_RINGS+1]; // add 1 for no item
         
@@ -80,7 +80,7 @@ class AocDay21 : public AocDay
         AocDay21();
         ~AocDay21();
         string part1(string filename, vector<string> extra_args);
-        //string part2(string filename, vector<string> extra_args);
+        string part2(string filename, vector<string> extra_args);
 };
 
 

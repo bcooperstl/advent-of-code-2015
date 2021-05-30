@@ -97,35 +97,35 @@ AocDay21::~AocDay21()
 
 void AocDay21::init_items()
 {
-    m_weapons[0].name = "No Weapon";
-    m_weapons[0].cost = 0;
-    m_weapons[0].damage = 0;
+    //m_weapons[0].name = "No Weapon";
+    //m_weapons[0].cost = 0;
+    //m_weapons[0].damage = 0;
+    //m_weapons[0].armor = 0;
+    
+    m_weapons[0].name = "Dagger";
+    m_weapons[0].cost = 8;
+    m_weapons[0].damage = 4;
     m_weapons[0].armor = 0;
     
-    m_weapons[1].name = "Dagger";
-    m_weapons[1].cost = 8;
-    m_weapons[1].damage = 4;
+    m_weapons[1].name = "Shortsword";
+    m_weapons[1].cost = 10;
+    m_weapons[1].damage = 5;
     m_weapons[1].armor = 0;
     
-    m_weapons[2].name = "Shortsword";
-    m_weapons[2].cost = 10;
-    m_weapons[2].damage = 5;
+    m_weapons[2].name = "Warhammer";
+    m_weapons[2].cost = 25;
+    m_weapons[2].damage = 6;
     m_weapons[2].armor = 0;
     
-    m_weapons[3].name = "Warhammer";
-    m_weapons[3].cost = 25;
-    m_weapons[3].damage = 6;
+    m_weapons[3].name = "Longsword";
+    m_weapons[3].cost = 40;
+    m_weapons[3].damage = 7;
     m_weapons[3].armor = 0;
     
-    m_weapons[4].name = "Longsword";
-    m_weapons[4].cost = 40;
-    m_weapons[4].damage = 7;
+    m_weapons[4].name = "Greataxe";
+    m_weapons[4].cost = 74;
+    m_weapons[4].damage = 8;
     m_weapons[4].armor = 0;
-    
-    m_weapons[5].name = "Greataxe";
-    m_weapons[5].cost = 74;
-    m_weapons[5].damage = 8;
-    m_weapons[5].armor = 0;
     
     
     m_armors[0].name = "No Armor";
@@ -244,9 +244,6 @@ bool AocDay21::battle(Player * player, Enemy * enemy)
     int player_damage_dealt = player->get_damage() - enemy->get_armor();
     int enemy_damage_dealt = enemy->get_damage() - player->get_armor();
     
-    cout << "Player deals " << player_damage_dealt << " each round" << endl;
-    cout << "Enemy deals " << enemy_damage_dealt << " each round" << endl;
-    
     if (player_damage_dealt < 1)
     {
         player_damage_dealt = 1;
@@ -256,6 +253,9 @@ bool AocDay21::battle(Player * player, Enemy * enemy)
     {
         enemy_damage_dealt = 1;
     }
+    
+    cout << "Player deals " << player_damage_dealt << " each round" << endl;
+    cout << "Enemy deals " << enemy_damage_dealt << " each round" << endl;
     
     while (1)
     {
@@ -289,7 +289,7 @@ string AocDay21::part1(string filename, vector<string> extra_args)
     
     Enemy enemy(enemy_hit_points, enemy_damage, enemy_armor);
     
-    for (int weapon_idx=0; weapon_idx <= NUM_WEAPONS; weapon_idx++)
+    for (int weapon_idx=0; weapon_idx < NUM_WEAPONS; weapon_idx++)
     {
         Item * weapon = &m_weapons[weapon_idx];
         player.set_weapon(weapon);
@@ -338,3 +338,63 @@ string AocDay21::part1(string filename, vector<string> extra_args)
     return out.str();
 }
 
+string AocDay21::part2(string filename, vector<string> extra_args)
+{
+    Player player(100); // start player with 100 hit points
+    
+    int enemy_hit_points, enemy_damage, enemy_armor;
+    
+    int best_cost = -1;
+    
+    parse_input(filename, enemy_hit_points, enemy_damage, enemy_armor);
+    
+    Enemy enemy(enemy_hit_points, enemy_damage, enemy_armor);
+    
+    for (int weapon_idx=0; weapon_idx < NUM_WEAPONS; weapon_idx++)
+    {
+        Item * weapon = &m_weapons[weapon_idx];
+        player.set_weapon(weapon);
+        for (int armor_idx=0; armor_idx <= NUM_ARMOR; armor_idx++)
+        {
+            Item * armor = &m_armors[armor_idx];
+            player.set_armor(armor);
+
+            // working through the permutations
+            for (int ring1_idx=0; ring1_idx < NUM_RINGS; ring1_idx++) // do not use the last ring on the first hand
+            {
+                for (int ring2_idx=ring1_idx; ring2_idx <= NUM_RINGS; ring2_idx++) // include the last ring for the second hand
+                {
+                    if ((ring1_idx == ring2_idx) && (ring1_idx != 0))
+                    {
+                        continue; // only allow duplicate item for no rings
+                    }
+                    
+                    Item * ring1 = &m_rings[ring1_idx];
+                    Item * ring2 = &m_rings[ring2_idx];
+
+                    player.set_rings(ring1, ring2);
+                    
+                    int cost = get_cost(weapon, armor, ring1, ring2);
+                    if (cost > best_cost)
+                    {
+                        if (!battle(&player, &enemy)) // looking to lose the fight
+                        {
+                            cout << "NEW BEST COST OF " << cost << " TO LOSE THE FIGHT" << endl;
+                            best_cost = cost;
+                        }
+                    }
+                    else
+                    {
+                        cout << "Skipping for player with ";
+                        player.display_equipment();
+                        cout << " because the cost of " << cost << " is less than most spent " << best_cost << endl;
+                    }
+                }
+            }
+        }
+    }
+    
+    ostringstream out;
+    out << best_cost;
+    return out.str();
+}
