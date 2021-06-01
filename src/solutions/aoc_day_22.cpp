@@ -131,6 +131,94 @@ bool AocDay22::can_cast_spell(GameStats * turn_stats, int current_turn, int spel
     return true;
 }
 
+void AocDay22::init_turn(GameStats * turn_stats, int current_turn)
+{
+    int prior_turn = current_turn-1;
+    cout << "Initializing turn " << current_turn << endl;
+    turn_stats[current_turn].turn_number = current_turn;
+    turn_stats[current_turn].player_hit_points = turn_stats[prior_turn].player_hit_points;
+    turn_stats[current_turn].player_armor = turn_stats[prior_turn].player_armor;
+    turn_stats[current_turn].player_mana = turn_stats[prior_turn].player_mana;
+    turn_stats[current_turn].player_damage = turn_stats[prior_turn].player_damage;
+    turn_stats[current_turn].boss_hit_points = turn_stats[prior_turn].boss_hit_points;
+    turn_stats[current_turn].boss_damage = turn_stats[prior_turn].boss_damage;
+    turn_stats[current_turn].last_spell_played = SPELL_NONE_OR_BOSS;
+    
+    // loop over the spells to see what effects we need to apply or undo
+    for (int i=0; i<MAX_SPELLS; i++)
+    {
+        if (m_spells[i].armor_boost > 0) // check to see if we need to unapply the armor boost.
+        {
+            int target_turn = current_turn - m_spells[i].num_turns;
+            if (target_turn > 0)
+            {
+                if (turn_stats[target_turn].last_spell_played == i)
+                {
+                    cout << " Armor boost from turn " << target_turn 
+                         << " has expired. Removing the value of " << m_spells[i].armor_boost 
+                         << " from spell " << m_spells[i].name << endl;
+                    turn_stats[current_turn].player_armor -= m_spells[i].armor_boost;
+                }
+            }
+        }
+
+        if (m_spells[i].start_turn_damage_dealt > 0)
+        {
+            for (int turn = current_turn-1; ((turn >= 0) && (turn >= (current_turn - m_spells[i].num_turns ))); turn--)
+            {
+                if (turn_stats[turn].last_spell_played == i)
+                {
+                    cout << " Dealing start of turn damage of " << m_spells[i].start_turn_damage_dealt
+                         << " from spell " << m_spells[i].name 
+                         << " called on turn " << turn << endl;
+                    turn_stats[current_turn].boss_hit_points -= m_spells[i].start_turn_damage_dealt;
+                    break;
+                }
+            }
+        }
+
+        if (m_spells[i].start_turn_mana_mined > 0)
+        {
+            for (int turn = current_turn-1; ((turn >= 0) && (turn >= (current_turn - m_spells[i].num_turns ))); turn--)
+            {
+                if (turn_stats[turn].last_spell_played == i)
+                {
+                    cout << " Mining mana to increase by " << m_spells[i].start_turn_mana_mined
+                         << " from spell " << m_spells[i].name 
+                         << " called on turn " << turn << endl;
+                    turn_stats[current_turn].player_mana += m_spells[i].start_turn_mana_mined;
+                    break;
+                }
+            }
+        }
+    }
+    return;
+}
+
+void AocDay22::apply_spell(GameStats * turn_stats, int current_turn, int spell_number)
+{
+    int prior_turn = current_turn-1;
+    cout << "Applying spell " << m_spells[spell_number].name << " on turn " << current_turn << endl;
+    turn_stats[current_turn].player_mana -= m_spells[spell_number].cost;
+    cout << " Decrementing player mana by " << m_spells[spell_number].cost << " to go to " << turn_stats[current_turn].player_mana << endl;
+    
+    if (m_spells[spell_number].instant_damage_dealt > 0)
+    {
+        turn_stats[current_turn].boss_hit_points -= m_spells[spell_number].instant_damage_dealt;
+        cout << " Dealing " << m_spells[spell_number].instant_damage_dealt 
+             << " damage to boss resulting in their hit points at " << turn_stats[current_turn].boss_hit_points << endl;
+    }
+    
+    if (m_spells[spell_number].instant_healing_applied > 0)
+    {
+        turn_stats[current_turn].player_hit_points += m_spells[spell_number].instant_healing_applied;
+        cout << " Healing " << m_spells[spell_number].instant_healing_applied 
+             << " hit points to bring player to " << turn_stats[current_turn].player_hit_points << endl;
+    }
+    return;
+}
+
+
 /*
 // Returns true if the player wins or false if the enemy wins
 bool AocDay22::battle(Player * player, Enemy * enemy)

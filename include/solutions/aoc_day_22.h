@@ -61,7 +61,12 @@ class AocDay22 : public AocDay
         void init_spells();
 
         void setup_turn_0(GameStats * turn_stats, int player_hit_points, int player_armor, int player_mana, int player_damage, int enemy_hit_points, int enemy_damage);
-
+        
+        bool can_cast_spell(GameStats * turn_stats, int current_turn, int spell_number);
+        
+        void init_turn(GameStats * turn_stats, int current_turn);
+        void apply_spell(GameStats * turn_stats, int current_turn, int spell_number);
+        
         //bool battle(Player * player, Enemy * enemy);
     public:
         AocDay22();
