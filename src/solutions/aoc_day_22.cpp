@@ -215,6 +215,9 @@ void AocDay22::apply_spell(GameStats * turn_stats, int current_turn, int spell_n
         cout << " Healing " << m_spells[spell_number].instant_healing_applied 
              << " hit points to bring player to " << turn_stats[current_turn].player_hit_points << endl;
     }
+    
+    turn_stats[current_turn].last_spell_played = spell_number;
+    
     return;
 }
 
