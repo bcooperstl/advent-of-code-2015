@@ -96,6 +96,41 @@ void AocDay22::parse_input(string filename, int & enemy_hit_points, int & enemy_
     return;
 }
 
+bool AocDay22::can_cast_spell(GameStats * turn_stats, int current_turn, int spell_number)
+{
+    // first check that we have enough mana to call the spell
+    if (turn_stats[current_turn].player_mana < m_spells[spell_number].cost)
+    {
+        cout << "Unable to call " << m_spells[spell_number].name 
+             << " because its cost is " << m_spells[spell_number].cost 
+             << " and player only has " << turn_stats[current_turn].player_mana << endl;
+        return false;
+    }
+    
+    // if the spell does not have a num_turns value, we can turn true here. it can be called any time
+    if (m_spells[spell_number].num_turns == 0)
+    {
+        cout << "Able to call " << m_spells[spell_number].name << " which does not have a number of turns" << endl;
+        return true;
+    }
+    
+    for (int turn = current_turn-1; ((turn >= 0) && (turn >= (current_turn - m_spells[spell_number].num_turns ))); turn--)
+    {
+        if (turn_stats[turn].last_spell_played == spell_number)
+        {
+            cout << "Unable to call " << m_spells[spell_number].name 
+                << " because its num_turns is " << m_spells[spell_number].num_turns 
+                << " and it was played on turn " << turn << " with current turn " << current_turn << endl;
+            return false;
+        }
+    }
+    
+    cout << "Able to call " << m_spells[spell_number].name 
+         << " because it was not played in the prior " << m_spells[spell_number].num_turns 
+         << " with current turn " << current_turn << endl;
+    return true;
+}
+
 /*
 // Returns true if the player wins or false if the enemy wins
 bool AocDay22::battle(Player * player, Enemy * enemy)
