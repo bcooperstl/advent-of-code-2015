@@ -269,56 +269,32 @@ void AocDay22::boss_attack(GameStats * turn_stats, int current_turn)
     turn_stats[current_turn].player_hit_points -= boss_damage_dealt;
 }
 
-/*
-// Returns true if the player wins or false if the enemy wins
-bool AocDay22::battle(Player * player, Enemy * enemy)
+int AocDay22::is_game_over(GameStats * turn_stats, int current_turn)
 {
-    cout << "Battling with player having ";
-    player->display_equipment();
-    cout << endl;
-    
-    int player_hit_points = player->get_start_hit_points();
-    int enemy_hit_points = enemy->get_start_hit_points();
-    
-    cout << "Player starts with " << player_hit_points << " hit points" << endl;
-    cout << "Enemy starts with " << enemy_hit_points << " hit points" << endl;
-    
-    int player_damage_dealt = player->get_damage() - enemy->get_armor();
-    int enemy_damage_dealt = enemy->get_damage() - player->get_armor();
-    
-    if (player_damage_dealt < 1)
+    if (turn_stats[current_turn].boss_hit_points > 0)
     {
-        player_damage_dealt = 1;
-    }
-    
-    if (enemy_damage_dealt < 1)
-    {
-        enemy_damage_dealt = 1;
-    }
-    
-    cout << "Player deals " << player_damage_dealt << " each round" << endl;
-    cout << "Enemy deals " << enemy_damage_dealt << " each round" << endl;
-    
-    while (1)
-    {
-        enemy_hit_points -= player_damage_dealt;
-        if (enemy_hit_points <= 0)
+        if (turn_stats[current_turn].player_hit_points > 0)
         {
-            cout << " Player wins" << endl;
-            return true;
+            return GAME_NOT_OVER;
         }
-        
-        player_hit_points -= enemy_damage_dealt;
-        if (player_hit_points <= 0)
+        else
         {
-            cout << " Enemy wins" << endl;
-            return false;
+            return GAME_OVER_BOSS_WON;
         }
     }
-    cerr << "SHOULD NOT HAVE GOTTEN HERE" << endl;
-    return false;
-};
-*/
+    else
+    {
+        if (turn_stats[current_turn].player_hit_points > 0)
+        {
+            return GAME_OVER_PLAYER_WON;
+        }
+        else
+        {
+            cerr << "INVALID GAME SCENARIO -BOTH LOSS" << endl;
+            return GAME_NOT_OVER;
+        }
+    }
+}
 
 string AocDay22::part1(string filename, vector<string> extra_args)
 {

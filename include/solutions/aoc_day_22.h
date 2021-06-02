@@ -21,6 +21,9 @@
 #define PLAYER_START_HIT_POINTS 50
 #define PLAYER_START_DAMAGE 0
 
+#define GAME_NOT_OVER 0
+#define GAME_OVER_PLAYER_WON 1
+#define GAME_OVER_BOSS_WON 2
 
 namespace Day22
 {
@@ -71,8 +74,8 @@ class AocDay22 : public AocDay
         
         void boss_attack(GameStats * turn_stats, int current_turn);
         
+        int is_game_over(GameStats * turn_stats, int current_turn);
         
-        //bool battle(Player * player, Enemy * enemy);
     public:
         AocDay22();
         ~AocDay22();
