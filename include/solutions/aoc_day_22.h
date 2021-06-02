@@ -10,7 +10,7 @@
 #define MAX_SPELLS 5
 
 #define SPELL_MAGIC_MISSLE 0
-#define SPELL_DRAIN 0
+#define SPELL_DRAIN 1
 #define SPELL_SHEILD 2
 #define SPELL_POISON 3
 #define SPELL_RECHAHRGE 4

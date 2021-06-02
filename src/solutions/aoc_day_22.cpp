@@ -225,6 +225,13 @@ void AocDay22::apply_spell(GameStats * turn_stats, int current_turn, int spell_n
     cout << " Decrementing player mana by " << m_spells[spell_number].cost << " to go to " << turn_stats[current_turn].player_mana << endl;
     turn_stats[current_turn].player_total_mana_spent += m_spells[spell_number].cost;
     
+    if (m_spells[spell_number].armor_boost > 0)
+    {
+        turn_stats[current_turn].player_armor += m_spells[spell_number].armor_boost;
+        cout << " Applying " << m_spells[spell_number].armor_boost 
+             << " armor boost to the player, resulting in armor incrementing to " <<  turn_stats[current_turn].player_armor << endl;
+    }
+    
     if (m_spells[spell_number].instant_damage_dealt > 0)
     {
         turn_stats[current_turn].boss_hit_points -= m_spells[spell_number].instant_damage_dealt;
@@ -418,8 +425,357 @@ string AocDay22::run_test_scenario_part1(int scenario_number)
     }
     else if (scenario_number == 2)
     {
+        // For example, suppose the player has 10 hit points and 250 mana, and that the boss has 14 hit points and 8 damage:
+        setup_turn_0(turn_stats, 10, 0, 250, 0, 14, 8);
         
+        int current_turn = 1;
+        init_turn(turn_stats, current_turn);
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
         
+        apply_spell(turn_stats, current_turn, SPELL_RECHAHRGE);
+        if (turn_stats[current_turn].last_spell_played != SPELL_RECHAHRGE)
+        {
+            cerr << " last_spell_played MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_mana != 21)
+        {
+            cerr << " player_mana MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_total_mana_spent != 229)
+        {
+            cerr << " player_total_mana_spent MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        
+        current_turn = 2;
+        init_turn(turn_stats, current_turn);
+        if (turn_stats[current_turn].player_mana != 122)
+        {
+            cerr << " player_mana MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        
+        boss_attack(turn_stats, current_turn);
+        if (turn_stats[current_turn].player_hit_points != 2)
+        {
+            cerr << " player_hit_points MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        
+        current_turn = 3;
+        init_turn(turn_stats, current_turn);
+        if (turn_stats[current_turn].player_mana != 223)
+        {
+            cerr << " player_mana MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        
+        apply_spell(turn_stats, current_turn, SPELL_SHEILD);
+        if (turn_stats[current_turn].last_spell_played != SPELL_SHEILD)
+        {
+            cerr << " last_spell_played MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_mana != 110)
+        {
+            cerr << " player_mana MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_total_mana_spent != 342)
+        {
+            cerr << " player_total_mana_spent MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+
+        current_turn = 4;
+        init_turn(turn_stats, current_turn);
+        if (turn_stats[current_turn].player_mana != 211)
+        {
+            cerr << " player_mana MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_armor != 7)
+        {
+            cerr << " player_armor MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        
+        boss_attack(turn_stats, current_turn);
+        if (turn_stats[current_turn].player_hit_points != 1)
+        {
+            cerr << " player_hit_points MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        
+        current_turn = 5;
+        init_turn(turn_stats, current_turn);
+        if (turn_stats[current_turn].player_mana != 312)
+        {
+            cerr << " player_mana MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_armor != 7)
+        {
+            cerr << " player_armor MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        
+        apply_spell(turn_stats, current_turn, SPELL_DRAIN);
+        if (turn_stats[current_turn].last_spell_played != SPELL_DRAIN)
+        {
+            cerr << " last_spell_played MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_mana != 239)
+        {
+            cerr << " player_mana MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_total_mana_spent != 415)
+        {
+            cerr << " player_total_mana_spent MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_hit_points != 3)
+        {
+            cerr << " player_hit_points MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].boss_hit_points != 12)
+        {
+            cerr << " boss_hit_points MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+
+        current_turn = 6;
+        init_turn(turn_stats, current_turn);
+        if (turn_stats[current_turn].player_mana != 340)
+        {
+            cerr << " player_mana MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_armor != 7)
+        {
+            cerr << " player_armor MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+
+        boss_attack(turn_stats, current_turn);
+        if (turn_stats[current_turn].player_hit_points != 2)
+        {
+            cerr << " player_hit_points MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        
+        current_turn = 7;
+        init_turn(turn_stats, current_turn);
+        if (turn_stats[current_turn].player_mana != 340)
+        {
+            cerr << " player_mana MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_armor != 7)
+        {
+            cerr << " player_armor MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+
+        apply_spell(turn_stats, current_turn, SPELL_POISON);
+        if (turn_stats[current_turn].last_spell_played != SPELL_POISON)
+        {
+            cerr << " last_spell_played MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_mana != 167)
+        {
+            cerr << " player_mana MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_total_mana_spent != 588)
+        {
+            cerr << " player_total_mana_spent MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        
+        current_turn = 8;
+        init_turn(turn_stats, current_turn);
+        if (turn_stats[current_turn].player_mana != 167)
+        {
+            cerr << " player_mana MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_armor != 7)
+        {
+            cerr << " player_armor MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].boss_hit_points != 9)
+        {
+            cerr << " boss_hit_points MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+
+        boss_attack(turn_stats, current_turn);
+        if (turn_stats[current_turn].player_hit_points != 1)
+        {
+            cerr << " player_hit_points MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        
+        current_turn = 9;
+        init_turn(turn_stats, current_turn);
+        if (turn_stats[current_turn].player_mana != 167)
+        {
+            cerr << " player_mana MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_armor != 0)
+        {
+            cerr << " player_armor MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].boss_hit_points != 6)
+        {
+            cerr << " boss_hit_points MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+
+        apply_spell(turn_stats, current_turn, SPELL_MAGIC_MISSLE);
+        if (turn_stats[current_turn].last_spell_played != SPELL_MAGIC_MISSLE)
+        {
+            cerr << " last_spell_played MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_mana != 114)
+        {
+            cerr << " player_mana MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_total_mana_spent != 641)
+        {
+            cerr << " player_total_mana_spent MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].boss_hit_points != 2)
+        {
+            cerr << " boss_hit_points MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        
+        current_turn = 10;
+        init_turn(turn_stats, current_turn);
+        if (turn_stats[current_turn].player_mana != 114)
+        {
+            cerr << " player_mana MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].player_armor != 0)
+        {
+            cerr << " player_armor MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[current_turn].boss_hit_points != -1)
+        {
+            cerr << " boss_hit_points MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, current_turn) != GAME_OVER_PLAYER_WON)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        cout << "Scenario 2 completed" << endl;
     }
     else
     {
