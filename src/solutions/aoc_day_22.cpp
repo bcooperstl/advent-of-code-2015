@@ -296,8 +296,149 @@ int AocDay22::is_game_over(GameStats * turn_stats, int current_turn)
     }
 }
 
+string AocDay22::run_test_scenario_part1(int scenario_number)
+{
+    int num_differences = 0;
+    
+    cout << "Running test scenario " << scenario_number << endl;
+    
+    GameStats turn_stats[MAX_TURNS + 1]; // add the +1 for the initial setup in turn 0;
+    memset(turn_stats, 0, sizeof(struct GameStats) * (MAX_TURNS + 1));
+    
+    if (scenario_number == 1)
+    {
+        // For example, suppose the player has 10 hit points and 250 mana, and that the boss has 13 hit points and 8 damage:
+        setup_turn_0(turn_stats, 10, 0, 250, 0, 13, 8);
+        
+        init_turn(turn_stats, 1);
+        
+        if (is_game_over(turn_stats, 1) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        
+        apply_spell(turn_stats, 1, SPELL_POISON);
+        if (turn_stats[1].last_spell_played != SPELL_POISON)
+        {
+            cerr << " last_spell_played MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[1].player_mana != 77)
+        {
+            cerr << " player_mana MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[1].player_total_mana_spent != 173)
+        {
+            cerr << " player_total_mana_spent MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, 1) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        
+        init_turn(turn_stats, 2);
+        if (turn_stats[2].boss_hit_points != 10)
+        {
+            cerr << " boss_hit_points MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, 2) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        
+        boss_attack(turn_stats, 2);
+        if (turn_stats[2].player_hit_points != 2)
+        {
+            cerr << " player_hit_points MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, 2) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        
+        init_turn(turn_stats, 3);
+        if (turn_stats[3].boss_hit_points != 7)
+        {
+            cerr << " boss_hit_points MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, 3) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        
+        apply_spell(turn_stats, 3, SPELL_MAGIC_MISSLE);
+        if (turn_stats[3].last_spell_played != SPELL_MAGIC_MISSLE)
+        {
+            cerr << " last_spell_played MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[3].player_mana != 24)
+        {
+            cerr << " player_mana MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[3].player_total_mana_spent != 226)
+        {
+            cerr << " player_total_mana_spent MISMATCH" << endl;
+            num_differences++;
+        }
+        if (turn_stats[3].boss_hit_points != 3)
+        {
+            cerr << " boss_hit_points MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, 3) != GAME_NOT_OVER)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+
+        init_turn(turn_stats, 4);
+        if (turn_stats[4].boss_hit_points != 0)
+        {
+            cerr << " boss_hit_points MISMATCH" << endl;
+            num_differences++;
+        }
+        if (is_game_over(turn_stats, 4) != GAME_OVER_PLAYER_WON)
+        {
+            cerr << " is_game_over MISMATCH" << endl;
+            num_differences++;
+        }
+        cout << "Scenario 1 completed" << endl;
+    }
+    else if (scenario_number == 2)
+    {
+        
+        
+    }
+    else
+    {
+        cerr << "INVALID SCENARIO NUMBER " << scenario_number << endl;
+        return "";
+    }
+
+    ostringstream out;
+    out << num_differences;
+    return out.str();
+}
+
 string AocDay22::part1(string filename, vector<string> extra_args)
 {
+    if (extra_args.size() == 1)
+    {
+        return run_test_scenario_part1(strtol(extra_args[0].c_str(), NULL, 10));
+    }
+
     GameStats turn_stats[MAX_TURNS + 1]; // add the +1 for the initial setup in turn 0;
     memset(turn_stats, 0, sizeof(struct GameStats) * (MAX_TURNS + 1));
     

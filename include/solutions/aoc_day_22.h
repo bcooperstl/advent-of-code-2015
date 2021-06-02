@@ -79,6 +79,9 @@ class AocDay22 : public AocDay
     public:
         AocDay22();
         ~AocDay22();
+        
+        string run_test_scenario_part1(int scenario_number);
+        
         string part1(string filename, vector<string> extra_args);
         //string part2(string filename, vector<string> extra_args);
 };
