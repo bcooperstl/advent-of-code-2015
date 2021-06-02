@@ -131,7 +131,28 @@ bool AocDay22::can_cast_spell(GameStats * turn_stats, int current_turn, int spel
     return true;
 }
 
+void AocDay22::setup_turn_0(GameStats * turn_stats, int player_hit_points, int player_armor, int player_mana, int player_damage, int enemy_hit_points, int enemy_damage)
+{
+    turn_stats[0].turn_number = 0;
+    turn_stats[0].player_hit_points = player_hit_points;
+    turn_stats[0].player_armor = player_armor;
+    turn_stats[0].player_mana = player_mana;
+    turn_stats[0].player_damage = player_damage;
+    turn_stats[0].boss_hit_points = enemy_hit_points;
+    turn_stats[0].boss_damage = enemy_damage;
+    turn_stats[0].last_spell_played = SPELL_NONE_OR_BOSS;
+    turn_stats[0].player_total_mana_spent = 0;
+}
+
+// done the first time a turn is initialized. Will mark that no spell has been played
 void AocDay22::init_turn(GameStats * turn_stats, int current_turn)
+{
+    reinit_turn(turn_stats, current_turn);
+    turn_stats[current_turn].last_spell_played = SPELL_NONE_OR_BOSS;
+}
+
+// done to reset to play the next spell. does not reset teh last_spell_played value
+void AocDay22::reinit_turn(GameStats * turn_stats, int current_turn)
 {
     int prior_turn = current_turn-1;
     cout << "Initializing turn " << current_turn << endl;
@@ -142,7 +163,8 @@ void AocDay22::init_turn(GameStats * turn_stats, int current_turn)
     turn_stats[current_turn].player_damage = turn_stats[prior_turn].player_damage;
     turn_stats[current_turn].boss_hit_points = turn_stats[prior_turn].boss_hit_points;
     turn_stats[current_turn].boss_damage = turn_stats[prior_turn].boss_damage;
-    turn_stats[current_turn].last_spell_played = SPELL_NONE_OR_BOSS;
+    //turn_stats[current_turn].last_spell_played = SPELL_NONE_OR_BOSS;
+    turn_stats[current_turn].player_total_mana_spent = turn_stats[prior_turn].player_total_mana_spent;
     
     // loop over the spells to see what effects we need to apply or undo
     for (int i=0; i<MAX_SPELLS; i++)
@@ -201,6 +223,7 @@ void AocDay22::apply_spell(GameStats * turn_stats, int current_turn, int spell_n
     cout << "Applying spell " << m_spells[spell_number].name << " on turn " << current_turn << endl;
     turn_stats[current_turn].player_mana -= m_spells[spell_number].cost;
     cout << " Decrementing player mana by " << m_spells[spell_number].cost << " to go to " << turn_stats[current_turn].player_mana << endl;
+    turn_stats[current_turn].player_total_mana_spent += m_spells[spell_number].cost;
     
     if (m_spells[spell_number].instant_damage_dealt > 0)
     {
@@ -221,6 +244,30 @@ void AocDay22::apply_spell(GameStats * turn_stats, int current_turn, int spell_n
     return;
 }
 
+void AocDay22::boss_attack(GameStats * turn_stats, int current_turn)
+{
+    cout << "Boss attacking on turn " << current_turn << endl;
+    
+    int player_hit_points = turn_stats[current_turn].player_hit_points;
+    int boss_hit_points = turn_stats[current_turn].boss_hit_points;
+    
+    cout << " Player starts with " << player_hit_points << " hit points" << endl;
+    cout << " Boss starts with " << boss_hit_points << " hit points" << endl;
+    
+    int boss_damage_dealt = turn_stats[current_turn].boss_damage - turn_stats[current_turn].player_armor;
+    
+    if (boss_damage_dealt < 1)
+    {
+        boss_damage_dealt = 1;
+    }
+    
+    cout << " The boss does " << boss_damage_dealt 
+         << " damage based on having " << turn_stats[current_turn].boss_damage
+         << " damage against " << turn_stats[current_turn].player_armor
+         << " player armor" << endl;
+    
+    turn_stats[current_turn].player_hit_points -= boss_damage_dealt;
+}
 
 /*
 // Returns true if the player wins or false if the enemy wins
@@ -272,18 +319,6 @@ bool AocDay22::battle(Player * player, Enemy * enemy)
     return false;
 };
 */
-
-void AocDay22::setup_turn_0(GameStats * turn_stats, int player_hit_points, int player_armor, int player_mana, int player_damage, int enemy_hit_points, int enemy_damage)
-{
-    turn_stats[0].turn_number = 0;
-    turn_stats[0].player_hit_points = player_hit_points;
-    turn_stats[0].player_armor = player_armor;
-    turn_stats[0].player_mana = player_mana;
-    turn_stats[0].player_damage = player_damage;
-    turn_stats[0].boss_hit_points = enemy_hit_points;
-    turn_stats[0].boss_damage = enemy_damage;
-    turn_stats[0].last_spell_played = SPELL_NONE_OR_BOSS;
-}
 
 string AocDay22::part1(string filename, vector<string> extra_args)
 {
