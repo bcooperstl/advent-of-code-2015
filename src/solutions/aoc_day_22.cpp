@@ -303,6 +303,29 @@ int AocDay22::is_game_over(GameStats * turn_stats, int current_turn)
     }
 }
 
+string AocDay22::part1(string filename, vector<string> extra_args)
+{
+    if (extra_args.size() == 1)
+    {
+        return run_test_scenario_part1(strtol(extra_args[0].c_str(), NULL, 10));
+    }
+
+    GameStats turn_stats[MAX_TURNS + 1]; // add the +1 for the initial setup in turn 0;
+    memset(turn_stats, 0, sizeof(struct GameStats) * (MAX_TURNS + 1));
+    
+    int enemy_hit_points, enemy_damage;
+    
+    int least_mana_used = INT_MAX;
+    
+    parse_input(filename, enemy_hit_points, enemy_damage);
+    
+    setup_turn_0(turn_stats, PLAYER_START_HIT_POINTS, PLAYER_START_ARMOR, PLAYER_START_MANA, PLAYER_START_DAMAGE, enemy_hit_points, enemy_damage);
+    
+    ostringstream out;
+    out << least_mana_used;
+    return out.str();
+}
+
 string AocDay22::run_test_scenario_part1(int scenario_number)
 {
     int num_differences = 0;
@@ -788,25 +811,3 @@ string AocDay22::run_test_scenario_part1(int scenario_number)
     return out.str();
 }
 
-string AocDay22::part1(string filename, vector<string> extra_args)
-{
-    if (extra_args.size() == 1)
-    {
-        return run_test_scenario_part1(strtol(extra_args[0].c_str(), NULL, 10));
-    }
-
-    GameStats turn_stats[MAX_TURNS + 1]; // add the +1 for the initial setup in turn 0;
-    memset(turn_stats, 0, sizeof(struct GameStats) * (MAX_TURNS + 1));
-    
-    int enemy_hit_points, enemy_damage;
-    
-    int least_mana_used = INT_MAX;
-    
-    parse_input(filename, enemy_hit_points, enemy_damage);
-    
-    setup_turn_0(turn_stats, PLAYER_START_HIT_POINTS, PLAYER_START_ARMOR, PLAYER_START_MANA, PLAYER_START_DAMAGE, enemy_hit_points, enemy_damage);
-    
-    ostringstream out;
-    out << least_mana_used;
-    return out.str();
-}
