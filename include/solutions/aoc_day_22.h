@@ -68,6 +68,7 @@ class AocDay22 : public AocDay
         
         bool can_cast_spell(GameStats * turn_stats, int current_turn, int spell_number);
         
+        void clear_turn(GameStats * turn_stats, int current_turn);
         void init_turn(GameStats * turn_stats, int current_turn);
         void reinit_turn(GameStats * turn_stats, int current_turn);
         void apply_spell(GameStats * turn_stats, int current_turn, int spell_number);
@@ -75,6 +76,8 @@ class AocDay22 : public AocDay
         void boss_attack(GameStats * turn_stats, int current_turn);
         
         int is_game_over(GameStats * turn_stats, int current_turn);
+        
+        int find_player_win_least_mana(GameStats * turn_stats);
         
     public:
         AocDay22();
