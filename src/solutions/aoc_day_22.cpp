@@ -152,14 +152,14 @@ void AocDay22::clear_turn(GameStats * turn_stats, int current_turn)
 }
 
 // done the first time a turn is initialized. Will mark that no spell has been played
-void AocDay22::init_turn(GameStats * turn_stats, int current_turn)
+void AocDay22::init_turn(GameStats * turn_stats, int current_turn, bool apply_hard_mode_adjustment)
 {
-    reinit_turn(turn_stats, current_turn);
+    reinit_turn(turn_stats, current_turn, apply_hard_mode_adjustment);
     turn_stats[current_turn].last_spell_played = SPELL_NONE_OR_BOSS;
 }
 
 // done to reset to play the next spell. does not reset teh last_spell_played value
-void AocDay22::reinit_turn(GameStats * turn_stats, int current_turn)
+void AocDay22::reinit_turn(GameStats * turn_stats, int current_turn, bool apply_hard_mode_adjustment)
 {
     int prior_turn = current_turn-1;
     //cout << "Initializing turn " << current_turn << endl;
@@ -172,6 +172,19 @@ void AocDay22::reinit_turn(GameStats * turn_stats, int current_turn)
     turn_stats[current_turn].boss_damage = turn_stats[prior_turn].boss_damage;
     //turn_stats[current_turn].last_spell_played = SPELL_NONE_OR_BOSS;
     turn_stats[current_turn].player_total_mana_spent = turn_stats[prior_turn].player_total_mana_spent;
+    
+    // if hard mode adjustment is to be applied, we need to do the action here of decrementing the player's hit points by 1
+    // if the causes the player to go to 0, we need to not apply the effects so that the game will end correctly
+    
+    if (apply_hard_mode_adjustment)
+    {
+        turn_stats[current_turn].player_hit_points--;
+        if (turn_stats[current_turn].player_hit_points <= 0)
+        {
+            //cout << "Hard mode causes this to end early" << endl;
+            return;
+        }
+    }
     
     // loop over the spells to see what effects we need to apply or undo
     for (int i=0; i<MAX_SPELLS; i++)
@@ -304,13 +317,13 @@ int AocDay22::is_game_over(GameStats * turn_stats, int current_turn)
         }
         else
         {
-            cerr << "INVALID GAME SCENARIO -BOTH LOSS" << endl;
+            cerr << "INVALID GAME SCENARIO - BOTH LOSS" << endl;
             return GAME_NOT_OVER;
         }
     }
 }
 
-int AocDay22::find_player_win_least_mana(GameStats * turn_stats)
+int AocDay22::find_player_win_least_mana(GameStats * turn_stats, bool is_hard_mode)
 {
     int least_mana_used = INT_MAX;
     int current_turn = 1;
@@ -328,7 +341,7 @@ int AocDay22::find_player_win_least_mana(GameStats * turn_stats)
             if (turn_stats[current_turn].last_spell_played == SPELL_NONE_OR_BOSS)
             {
                 //cout << " No spell tried at this level yet. Doing full init" << endl;
-                init_turn(turn_stats, current_turn);
+                init_turn(turn_stats, current_turn, is_hard_mode);
                 is_first = true;
             }
             else if (turn_stats[current_turn].last_spell_played >= (MAX_SPELLS-1))
@@ -339,13 +352,13 @@ int AocDay22::find_player_win_least_mana(GameStats * turn_stats)
             }
             else
             {
-                reinit_turn(turn_stats, current_turn);
+                reinit_turn(turn_stats, current_turn, is_hard_mode);
                 //cout << " A spell has been tried at this level already. Doing reinit" << endl;
                 next_spell_to_try = turn_stats[current_turn].last_spell_played + 1;
             }
             
             int game_status = is_game_over(turn_stats, current_turn);
-            if (game_status == GAME_OVER_PLAYER_WON) // only the player can win based on the init_turn effects
+            if (game_status == GAME_OVER_PLAYER_WON) // the player can win based on the init_turn effects
             {
                 //cout << " The Player won based on the init_turn rules" << endl;
                 //cout << " The player has used " << turn_stats[current_turn].player_total_mana_spent << " mana" << endl;
@@ -354,6 +367,12 @@ int AocDay22::find_player_win_least_mana(GameStats * turn_stats)
                     least_mana_used = turn_stats[current_turn].player_total_mana_spent;
                     cout << " *** NEW LEAST MANA USED VALUE OF " << least_mana_used << endl;
                 }
+                current_turn -= 2; // go back to the prior turn to try a different spell to see if it gets a better result;
+                continue;
+            }
+            else if (game_status == GAME_OVER_BOSS_WON) // the player can win based on the init_turn effects when hard mode is added
+            {
+                //cout << " The Boss won based on the init_turn rules" << endl;
                 current_turn -= 2; // go back to the prior turn to try a different spell to see if it gets a better result;
                 continue;
             }
@@ -426,7 +445,7 @@ int AocDay22::find_player_win_least_mana(GameStats * turn_stats)
         {
             // first step - initialize the turn. will run any effects
             //cout << "Turn " << current_turn << " is a turn for the boss" << endl;
-            init_turn(turn_stats, current_turn);
+            init_turn(turn_stats, current_turn, false); // never apply the hard mode adjustment on the boss's turns
             int game_status = is_game_over(turn_stats, current_turn);
             if (game_status == GAME_OVER_PLAYER_WON) // only the player can win based on the init_turn effects
             {
@@ -475,7 +494,30 @@ string AocDay22::part1(string filename, vector<string> extra_args)
     
     setup_turn_0(turn_stats, PLAYER_START_HIT_POINTS, PLAYER_START_ARMOR, PLAYER_START_MANA, PLAYER_START_DAMAGE, enemy_hit_points, enemy_damage);
     
-    int least_mana_used = find_player_win_least_mana(turn_stats);
+    int least_mana_used = find_player_win_least_mana(turn_stats, false); // not hard mode
+    
+    ostringstream out;
+    out << least_mana_used;
+    return out.str();
+}
+
+string AocDay22::part2(string filename, vector<string> extra_args)
+{
+    if (extra_args.size() == 1)
+    {
+        return run_test_scenario_part1(strtol(extra_args[0].c_str(), NULL, 10));
+    }
+
+    GameStats turn_stats[MAX_TURNS + 1]; // add the +1 for the initial setup in turn 0;
+    memset(turn_stats, 0, sizeof(struct GameStats) * (MAX_TURNS + 1));
+    
+    int enemy_hit_points, enemy_damage;
+    
+    parse_input(filename, enemy_hit_points, enemy_damage);
+    
+    setup_turn_0(turn_stats, PLAYER_START_HIT_POINTS, PLAYER_START_ARMOR, PLAYER_START_MANA, PLAYER_START_DAMAGE, enemy_hit_points, enemy_damage);
+    
+    int least_mana_used = find_player_win_least_mana(turn_stats, true); // hard mode
     
     ostringstream out;
     out << least_mana_used;
@@ -496,7 +538,7 @@ string AocDay22::run_test_scenario_part1(int scenario_number)
         // For example, suppose the player has 10 hit points and 250 mana, and that the boss has 13 hit points and 8 damage:
         setup_turn_0(turn_stats, 10, 0, 250, 0, 13, 8);
         
-        init_turn(turn_stats, 1);
+        init_turn(turn_stats, 1, false);
         
         if (is_game_over(turn_stats, 1) != GAME_NOT_OVER)
         {
@@ -526,7 +568,7 @@ string AocDay22::run_test_scenario_part1(int scenario_number)
             num_differences++;
         }
         
-        init_turn(turn_stats, 2);
+        init_turn(turn_stats, 2, false);
         if (turn_stats[2].boss_hit_points != 10)
         {
             cerr << " boss_hit_points MISMATCH" << endl;
@@ -550,7 +592,7 @@ string AocDay22::run_test_scenario_part1(int scenario_number)
             num_differences++;
         }
         
-        init_turn(turn_stats, 3);
+        init_turn(turn_stats, 3, false);
         if (turn_stats[3].boss_hit_points != 7)
         {
             cerr << " boss_hit_points MISMATCH" << endl;
@@ -589,7 +631,7 @@ string AocDay22::run_test_scenario_part1(int scenario_number)
             num_differences++;
         }
 
-        init_turn(turn_stats, 4);
+        init_turn(turn_stats, 4, false);
         if (turn_stats[4].boss_hit_points != 0)
         {
             cerr << " boss_hit_points MISMATCH" << endl;
@@ -608,7 +650,7 @@ string AocDay22::run_test_scenario_part1(int scenario_number)
         setup_turn_0(turn_stats, 10, 0, 250, 0, 14, 8);
         
         int current_turn = 1;
-        init_turn(turn_stats, current_turn);
+        init_turn(turn_stats, current_turn, false);
         if (is_game_over(turn_stats, current_turn) != GAME_NOT_OVER)
         {
             cerr << " is_game_over MISMATCH" << endl;
@@ -638,7 +680,7 @@ string AocDay22::run_test_scenario_part1(int scenario_number)
         }
         
         current_turn = 2;
-        init_turn(turn_stats, current_turn);
+        init_turn(turn_stats, current_turn, false);
         if (turn_stats[current_turn].player_mana != 122)
         {
             cerr << " player_mana MISMATCH" << endl;
@@ -663,7 +705,7 @@ string AocDay22::run_test_scenario_part1(int scenario_number)
         }
         
         current_turn = 3;
-        init_turn(turn_stats, current_turn);
+        init_turn(turn_stats, current_turn, false);
         if (turn_stats[current_turn].player_mana != 223)
         {
             cerr << " player_mana MISMATCH" << endl;
@@ -698,7 +740,7 @@ string AocDay22::run_test_scenario_part1(int scenario_number)
         }
 
         current_turn = 4;
-        init_turn(turn_stats, current_turn);
+        init_turn(turn_stats, current_turn, false);
         if (turn_stats[current_turn].player_mana != 211)
         {
             cerr << " player_mana MISMATCH" << endl;
@@ -728,7 +770,7 @@ string AocDay22::run_test_scenario_part1(int scenario_number)
         }
         
         current_turn = 5;
-        init_turn(turn_stats, current_turn);
+        init_turn(turn_stats, current_turn, false);
         if (turn_stats[current_turn].player_mana != 312)
         {
             cerr << " player_mana MISMATCH" << endl;
@@ -778,7 +820,7 @@ string AocDay22::run_test_scenario_part1(int scenario_number)
         }
 
         current_turn = 6;
-        init_turn(turn_stats, current_turn);
+        init_turn(turn_stats, current_turn, false);
         if (turn_stats[current_turn].player_mana != 340)
         {
             cerr << " player_mana MISMATCH" << endl;
@@ -808,7 +850,7 @@ string AocDay22::run_test_scenario_part1(int scenario_number)
         }
         
         current_turn = 7;
-        init_turn(turn_stats, current_turn);
+        init_turn(turn_stats, current_turn, false);
         if (turn_stats[current_turn].player_mana != 340)
         {
             cerr << " player_mana MISMATCH" << endl;
@@ -848,7 +890,7 @@ string AocDay22::run_test_scenario_part1(int scenario_number)
         }
         
         current_turn = 8;
-        init_turn(turn_stats, current_turn);
+        init_turn(turn_stats, current_turn, false);
         if (turn_stats[current_turn].player_mana != 167)
         {
             cerr << " player_mana MISMATCH" << endl;
@@ -883,7 +925,7 @@ string AocDay22::run_test_scenario_part1(int scenario_number)
         }
         
         current_turn = 9;
-        init_turn(turn_stats, current_turn);
+        init_turn(turn_stats, current_turn, false);
         if (turn_stats[current_turn].player_mana != 167)
         {
             cerr << " player_mana MISMATCH" << endl;
@@ -933,7 +975,7 @@ string AocDay22::run_test_scenario_part1(int scenario_number)
         }
         
         current_turn = 10;
-        init_turn(turn_stats, current_turn);
+        init_turn(turn_stats, current_turn, false);
         if (turn_stats[current_turn].player_mana != 114)
         {
             cerr << " player_mana MISMATCH" << endl;

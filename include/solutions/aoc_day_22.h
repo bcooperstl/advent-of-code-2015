@@ -69,15 +69,15 @@ class AocDay22 : public AocDay
         bool can_cast_spell(GameStats * turn_stats, int current_turn, int spell_number);
         
         void clear_turn(GameStats * turn_stats, int current_turn);
-        void init_turn(GameStats * turn_stats, int current_turn);
-        void reinit_turn(GameStats * turn_stats, int current_turn);
+        void init_turn(GameStats * turn_stats, int current_turn, bool apply_hard_mode_adjustment);
+        void reinit_turn(GameStats * turn_stats, int current_turn, bool apply_hard_mode_adjustment);
         void apply_spell(GameStats * turn_stats, int current_turn, int spell_number);
         
         void boss_attack(GameStats * turn_stats, int current_turn);
         
         int is_game_over(GameStats * turn_stats, int current_turn);
         
-        int find_player_win_least_mana(GameStats * turn_stats);
+        int find_player_win_least_mana(GameStats * turn_stats, bool is_hard_mode);
         
     public:
         AocDay22();
@@ -86,8 +86,9 @@ class AocDay22 : public AocDay
         string run_test_scenario_part1(int scenario_number);
         
         string part1(string filename, vector<string> extra_args);
-        //string part2(string filename, vector<string> extra_args);
+        string part2(string filename, vector<string> extra_args);
 };
 
 
 #endif
+
