@@ -149,3 +149,4 @@
 22,1,day22_input.txt,900
 22,1,test_cases/day22_other1.txt,953
 22,2,test_cases/day22_other1.txt,1289
+22,2,day22_input.txt,1216
