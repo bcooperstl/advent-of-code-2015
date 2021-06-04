@@ -142,3 +142,11 @@
 20,2,day20_input.txt,705600
 21,1,day21_input.txt,111
 21,2,day21_input.txt,188
+#Optional extra parm for day 22 part 1 is for which test scenario to run
+#Return value of 0 means no mismatches between the example and my program found
+22,1,day22_input.txt,0,1
+22,1,day22_input.txt,0,2
+22,1,day22_input.txt,900
+22,1,test_cases/day22_other1.txt,953
+22,2,test_cases/day22_other1.txt,1289
+22,2,day22_input.txt,1216
