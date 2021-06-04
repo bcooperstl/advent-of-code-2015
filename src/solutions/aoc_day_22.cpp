@@ -114,7 +114,7 @@ bool AocDay22::can_cast_spell(GameStats * turn_stats, int current_turn, int spel
         return true;
     }
     
-    for (int turn = current_turn-1; ((turn >= 0) && (turn >= (current_turn - m_spells[spell_number].num_turns ))); turn--)
+    for (int turn = current_turn-1; ((turn >= 0) && (turn >= (current_turn - (m_spells[spell_number].num_turns - 1)))); turn--)
     {
         if (turn_stats[turn].last_spell_played == spell_number)
         {
