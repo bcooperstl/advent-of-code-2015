@@ -180,3 +180,19 @@ string AocDay23::part1(string filename, vector<string> extra_args)
     out << program.reg[1]; // get reg b
     return out.str();
 }
+
+string AocDay23::part2(string filename, vector<string> extra_args)
+{
+    Program program;
+    
+    parse_input(filename, program);
+    
+    init_program(program);
+    program.reg[0] = 1ull; // for part 2, start a as 1, not 0
+    
+    run_program_to_end(program);
+    
+    ostringstream out;
+    out << program.reg[1]; // get reg b
+    return out.str();
+}
