@@ -150,3 +150,7 @@
 22,1,test_cases/day22_other1.txt,953
 22,2,test_cases/day22_other1.txt,1289
 22,2,day22_input.txt,1216
+23,1,test_cases/day23_test1.txt,0
+23,1,test_cases/day23_test2.txt,2
+23,1,day23_input.txt,307
+23,2,day23_input.txt,160
