@@ -133,7 +133,7 @@ void AocDay23::run_program_to_end(Program & program)
 
             // 'jie r, offset' is like jmp, but only jumps if register r is even ("jump if even").
             case OPCODE_JIE:
-                if (ip % 2 == 0)
+                if (program.reg[reg] % 2 == 0)
                 {
                     cout << "Line " << ip << " JIE is even - jumping by " << offset << " to " << ip+offset <<  endl;
                     program.next_instruction += offset;
@@ -147,7 +147,7 @@ void AocDay23::run_program_to_end(Program & program)
             
             // 'jio r, offset' is like jmp, but only jumps if register r is 1 ("jump if one", not odd).
             case OPCODE_JIO:
-                if (ip == 1)
+                if (program.reg[reg] == 1)
                 {
                     cout << "Line " << ip << " JIE is one - jumping by " << offset << " to " << ip+offset <<  endl;
                     program.next_instruction += offset;
