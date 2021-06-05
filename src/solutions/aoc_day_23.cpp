@@ -88,14 +88,23 @@ void AocDay23::parse_input(string filename, Program & program)
 void AocDay23::init_program(Program & program)
 {
     program.next_instruction = 0;
-    program.reg[0] = 0;
-    program.reg[1] = 0;
+    mpz_init (program.reg[0]);
+    mpz_init (program.reg[1]);
     
     return;
 }
 
 void AocDay23::run_program_to_end(Program & program)
 {
+    char pre[1000];
+    char post[1000];
+    
+    mpz_t one;
+    mpz_t three;
+    
+    mpz_set_ui(one, 1);
+    mpz_set_ui(three, 3);
+    
     while ((program.next_instruction >= 0) && (program.next_instruction < program.num_instructions))
     {
         int ip = program.next_instruction;
@@ -104,24 +113,38 @@ void AocDay23::run_program_to_end(Program & program)
         
         switch (program.instructions[ip].opcode)
         {
+            if (mpz_sizeinbase(program.reg[reg], 10) + 2 > 1000)
+            {
+                cerr << "*****Need a bigger buffer " << endl;
+            }
+
             // 'hlf r' sets register r to half its current value, then continues with the next instruction.
             case OPCODE_HLF:
-                cout << "Line " << ip << " HLF halfing register " << reg << " from " << program.reg[reg] << " to " << program.reg[reg] / 2ull << endl;
-                program.reg[reg] = program.reg[reg] / 2ull;
+                mpz_get_str(pre, 10, program.reg[reg]);
+                mpz_fdiv_q_ui(program.reg[reg], program.reg[reg], 2);
+                mpz_get_str(post, 10, program.reg[reg]);
+                
+                cout << "Line " << ip << " HLF halfing register " << reg << " from " << pre << " to " << post << endl;
                 program.next_instruction++;
                 break;
 
             // 'tpl r' sets register r to triple its current value, then continues with the next instruction.
             case OPCODE_TPL:
-                cout << "Line " << ip << " TPL tripling register " << reg << " from " << program.reg[reg] << " to " << program.reg[reg] * 3ull << endl;
-                program.reg[reg] = program.reg[reg] * 3ull;
+                mpz_get_str(pre, 10, program.reg[reg]);
+                mpz_mul_ui(program.reg[reg], program.reg[reg], 3);
+                mpz_get_str(post, 10, program.reg[reg]);
+
+                cout << "Line " << ip << " TPL tripling register " << reg << " from " << pre << " to " << post << endl;
                 program.next_instruction++;
                 break;
 
             // 'inc r' increments register r, adding 1 to it, then continues with the next instruction.
             case OPCODE_INC:
-                cout << "Line " << ip << " INC incrementing register " << reg << " from " << program.reg[reg] << " to " << program.reg[reg] + 1ull << endl;
-                program.reg[reg] = program.reg[reg] + 1ull;
+                mpz_get_str(pre, 10, program.reg[reg]);
+                mpz_add_ui(program.reg[reg], program.reg[reg], 1);
+                mpz_get_str(post, 10, program.reg[reg]);
+
+                cout << "Line " << ip << " INC incrementing register " << reg << " from " << pre << " to " << post << endl;
                 program.next_instruction++;
                 break;
 

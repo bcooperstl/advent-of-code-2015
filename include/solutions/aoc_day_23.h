@@ -30,7 +30,7 @@ namespace Day23
         Instruction instructions[MAX_PROGRAM_LENGTH];
         int num_instructions;
         int next_instruction;
-        unsigned long long int reg[NUM_REG]; // 0 for reg a, 1 for reg b
+        mpz_t reg[NUM_REG]; // 0 for reg a, 1 for reg b
     };
 }
 
