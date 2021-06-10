@@ -131,7 +131,7 @@ bool AocDay24::next_position(long * input, int input_size, int output_size, long
 }
 
 // input is sorted from largest to smallest
-bool AocDay24::find_best_partition(long * input, int input_size, int output_size, long target, long * best_values, long & best_qr)
+bool AocDay24::find_best_partition_3(long * input, int input_size, int output_size, long target, long * best_values, long & best_qr)
 {
     cout << "Searching for best partition to make " << target << " out of " << output_size << " weights" << endl;
     
@@ -173,12 +173,12 @@ bool AocDay24::find_best_partition(long * input, int input_size, int output_size
 
         if (current_sum == target)
         {
-            cout << " Potential match with";
-            for (int i=0; i<output_size; i++)
-            {
-                cout << " " << values[i];
-            }
-            cout << endl;
+            //cout << " Potential match with";
+            //for (int i=0; i<output_size; i++)
+            //{
+            //    cout << " " << values[i];
+            //}
+            //cout << endl;
             
             long remaining_values[MAX_VALUES];
             int remaining_pos = 0;
@@ -228,6 +228,116 @@ bool AocDay24::find_best_partition(long * input, int input_size, int output_size
     return best_found;
 }
 
+// input is sorted from largest to smallest
+bool AocDay24::find_best_partition_4(long * input, int input_size, int output_size, long target, long * best_values, long & best_qr)
+{
+    cout << "Searching for best partition to make " << target << " out of " << output_size << " weights" << endl;
+    
+    long values[MAX_VALUES];
+    int positions[MAX_VALUES];
+    int num_used = 0;
+    
+    bool best_found = false;
+    
+    long shortcut_sum = 0;
+    for (int i=0; i<output_size; i++)
+    {
+        shortcut_sum += input[i];
+    }
+    if (shortcut_sum < target)
+    {
+        cout << " Cannot make " << target << " out of the largest " << output_size << " weights. Shortcutting and returning false" << endl;
+        return false;
+    }
+    
+    long current_sum = 0;
+    for (int i=0; i<output_size; i++)
+    {
+        values[i] = input[i];
+        positions[i] = i;
+        current_sum += input[i];
+    }
+    
+    bool valid_position = true;
+    
+    while (valid_position)
+    {
+        //cout << " Checking ";
+        //for (int i=0; i<output_size; i++)
+        //{
+        //    cout << " " << values[i];
+        //}
+        //cout << endl;
+
+        if (current_sum == target)
+        {
+            //cout << " Potential match with";
+            //for (int i=0; i<output_size; i++)
+            //{
+            //    cout << " " << values[i];
+            //}
+            //cout << endl;
+            
+            long remaining_values[MAX_VALUES];
+            int remaining_pos = 0;
+            for (int j=0; j<input_size; j++)
+            {
+                bool in_sum = false;
+                for (int i=0; i<output_size; i++)
+                {
+                    if (positions[i] == j)
+                    {
+                        in_sum = true;
+                        break;
+                    }
+                }
+                if (!in_sum)
+                {
+                    remaining_values[remaining_pos] = input[j];
+                    remaining_pos++;
+                }
+            }
+               
+            long qr = calculate_qr(values, output_size);
+            if (qr < best_qr)
+            {
+                cout << " Potential 4 best qr of " << qr << endl;
+                int new_output_size = 1;
+                bool found = false;
+                long best_values_3[MAX_VALUES]; // dont care; need it as a placeholder
+                long best_qr_3 = LONG_MAX; // dont care; need it as a placeholder
+                while (new_output_size <= remaining_pos / 3)
+                {
+                    if (find_best_partition_3(remaining_values, remaining_pos, new_output_size, target, best_values_3, best_qr_3))
+                    {
+                        cout << " Remaining values can be split amongst 3 groups. Good load possibility" << endl;
+                        cout << " NEW BEST 4 QR OF " << qr << " FOUND!" << endl;
+                        best_qr = qr;
+                        best_found = true;
+                        for (int i=0; i<output_size; i++)
+                        {
+                            best_values[i] = values[i];
+                        }
+                        break;
+                        found = true;
+                    }
+                    new_output_size++;
+                }
+                
+                if (!found)
+                {
+                    cout << " Cannot split remaining values into three equal parts" << endl;
+                }
+            }
+        }
+        
+        valid_position = next_position(input, input_size, output_size, values, positions, current_sum);
+    }
+    
+    return best_found;
+}
+
+
 string AocDay24::part1(string filename, vector<string> extra_args)
 {
     long all_values[MAX_VALUES];
@@ -247,7 +357,36 @@ string AocDay24::part1(string filename, vector<string> extra_args)
     
     
     int i = 1;
-    while (!find_best_partition(all_values, weights.size(), i, target, best_values, best_qr))
+    while (!find_best_partition_3(all_values, weights.size(), i, target, best_values, best_qr))
+    {
+        i++;
+    }
+
+    ostringstream out;
+    out << best_qr;
+    return out.str();
+}
+
+string AocDay24::part2(string filename, vector<string> extra_args)
+{
+    long all_values[MAX_VALUES];
+    long best_values[MAX_VALUES];
+    long best_qr = LONG_MAX;
+    long sum = 0;
+    long target;
+    
+    vector<long> weights = parse_input(filename);
+    for (int i=0; i<weights.size(); i++)
+    {
+        all_values[i] = weights[i];
+        sum += all_values[i];
+    }
+    
+    target = sum / 4;
+    
+    
+    int i = 1;
+    while (!find_best_partition_4(all_values, weights.size(), i, target, best_values, best_qr))
     {
         i++;
     }
