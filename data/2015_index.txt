@@ -154,3 +154,7 @@
 23,1,test_cases/day23_test2.txt,2
 23,1,day23_input.txt,307
 23,2,day23_input.txt,160
+24,1,test_cases/day24_test1.txt,99
+24,1,day24_input.txt,11846773891
+24,2,test_cases/day24_test1.txt,44
+24,2,day24_input.txt,80393059
