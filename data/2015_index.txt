@@ -158,3 +158,8 @@
 24,1,day24_input.txt,11846773891
 24,2,test_cases/day24_test1.txt,44
 24,2,day24_input.txt,80393059
+25,1,test_cases/day25_test1.txt,31916031
+25,1,test_cases/day25_test2.txt,18749137
+25,1,test_cases/day25_test3.txt,1534922
+25,1,test_cases/day25_test4.txt,31663883
+25,1,test_cases/day25_test5.txt,27995004
