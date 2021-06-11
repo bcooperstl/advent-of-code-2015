@@ -163,3 +163,4 @@
 25,1,test_cases/day25_test3.txt,1534922
 25,1,test_cases/day25_test4.txt,31663883
 25,1,test_cases/day25_test5.txt,27995004
+25,1,day25_input.txt,19980801
